@@ -44,7 +44,7 @@ Dự án áp dụng mô hình **MVC (Model-View-Controller)** tự định nghĩ
 │   └── 📂 client/           # Các trang dành cho khách hàng
 ├── 📄 .htaccess             # Xử lý Friendly URL (Rewrite Engine)
 └── 📄 index.php             # Front Controller (Entry point)
-
+```
 ## 👥 4. PHÂN CHIA CÔNG VIỆC (NHÓM 2 NGƯỜI)
 
 ### 🥇 Thành viên A: Nguyễn Đức Nghĩa (Leader)
@@ -55,7 +55,7 @@ Dự án áp dụng mô hình **MVC (Model-View-Controller)** tự định nghĩ
     * 📑 Quản lý hệ thống Hỏi/đáp (CRUD - Thêm, sửa, xóa).
     * 📩 Quản lý phản hồi khách hàng từ form liên hệ.
 
-### 🥈 Thành viên B: (Cộng sự)
+### 🥈 Thành viên Nguyễn Hoàng Minh Hiếu: (Cộng sự)
 **Phần việc phụ trách: Task #3 & #4**
 * **Giao diện Public:** 🛒 Danh sách sản phẩm, 🔍 Chi tiết sản phẩm, 🛍️ Giỏ hàng, 📰 Danh sách bài viết & Tin tức.
 * **Hệ thống Quản trị (Admin):**
