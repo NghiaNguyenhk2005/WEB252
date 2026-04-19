@@ -77,7 +77,5 @@ Dự án áp dụng mô hình **MVC (Model-View-Controller)** tự định nghĩ
 * 🚫 **KHÔNG** sử dụng CMS/CMF (Wordpress, Joomla, Drupal...).
 * 🚫 **KHÔNG** sao chép mã nguồn (Gian lận sẽ nhận 0 điểm theo quy định).
 * ✅ **BẮT BUỘC** ảnh phải lưu trên server nội bộ (không dùng link ảnh bên ngoài).
-* ✅ **BÁO CÁO:** Tối thiểu 20 trang, bao gồm thiết kế DB và hướng dẫn cài đặt.
-
 ---
 
