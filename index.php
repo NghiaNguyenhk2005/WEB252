@@ -1,17 +1,25 @@
 <?php
 
-//require_once "app/controllers/AuthController.php";
-//require_once "app/controllers/ProductController.php";
-// Inside index.php or your PageController
+require_once "app/core/Database.php";
+require_once "app/core/BaseModel.php";
+
 require_once "app/models/SettingModel.php";
 
+// Create database connection
+$db = new Database();
+
+$conn = $db->getConnection();
+
+// Load settings
 $settingModel = new SettingModel($conn);
+
 $globalSettings = $settingModel->getAllSettings();
 
-// Now $globalSettings['company_phone'] is available!
+// Routing
 $url = $_GET['url'] ?? '';
 
 switch ($url) {
+
     case 'login':
         //(new AuthController())->login();
         break;
@@ -27,34 +35,28 @@ switch ($url) {
     case 'products':
         //(new ProductController())->index();
         break;
+
     case 'contact':
+        require_once "app/controllers/client/ContactController.php";
         (new ContactController())->index();
         break;
+
     case 'contact/submit':
+        require_once "app/controllers/client/ContactController.php";
         (new ContactController())->submit();
         break;
-        
-    // Admin Routes for Task 1[cite: 10]
+
     case 'admin/settings':
         require_once "app/controllers/admin/AdminSettingController.php";
         (new AdminSettingController())->index();
         break;
-        
+
     case 'admin/settings/update':
         require_once "app/controllers/admin/AdminSettingController.php";
         (new AdminSettingController())->update();
         break;
 
-    case (preg_match('/admin\/contacts\/update\/(\d+)/', $url, $matches) ? true : false):
-        (new AdminContactController())->updateStatus($matches[1]);
-        break;
-
-    case (preg_match('/admin\/contacts\/delete\/(\d+)/', $url, $matches) ? true : false):
-        (new AdminContactController())->delete($matches[1]);
-        break;
-        
     default:
         require_once "views/client/home.php";
         break;
 }
-?>
