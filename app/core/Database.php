@@ -1,24 +1,32 @@
 <?php
-class Database {
+
+class Database
+{
     private $host = "localhost";
-    private $user = "root";
-    private $pass = "";
-    private $dbname = "company_web";
+    private $username = "root";
+    private $password = "";
+    private $database = "tass";
 
     public $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->conn = new mysqli(
             $this->host,
-            $this->user,
-            $this->pass,
-            $this->dbname
+            $this->username,
+            $this->password,
+            $this->database
         );
 
         if ($this->conn->connect_error) {
-            die("DB Connection failed: " . $this->conn->connect_error);
+            die("Connection failed: " . $this->conn->connect_error);
         }
 
-        $this->conn->set_charset("utf8mb4");
+        $this->conn->set_charset("utf8");
+    }
+
+    public function getConnection()
+    {
+        return $this->conn;
     }
 }

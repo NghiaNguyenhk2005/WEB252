@@ -1,4 +1,7 @@
 <?php
+
+require_once __DIR__ . '/../core/BaseModel.php';
+
 class SettingModel extends BaseModel {
     public function __construct($conn) {
         parent::__construct($conn, "settings");
