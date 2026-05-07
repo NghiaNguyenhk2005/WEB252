@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../../models/ContactModel.php';
+
 class ContactController {
     private $contactModel;
 
@@ -9,8 +11,8 @@ class ContactController {
 
     public function index() {
         // Render the contact page view
-        require_once "views/client/contact.php";
-    }
+        require_once __DIR__ . '/../../../views/client/contact.php';
+        }
 
     public function submit() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,7 +23,7 @@ class ContactController {
 
             if (empty($name) || !filter_var($email, FILTER_VALIDATE_EMAIL) || empty($message)) {
                 // Handle error (e.g., set session error and redirect)
-                header("Location: /contact?error=1");
+                header("Location: index.php?url=contact&error=1");
                 exit;
             }
 
@@ -32,8 +34,7 @@ class ContactController {
                 'message' => $message,
                 'user_id' => $_SESSION['user']['id'] ?? null // Nullable for guests
             ]);
-
-            header("Location: /contact?success=1");
+            header("Location: index.php?url=contact&success=1");
             exit;
         }
     }

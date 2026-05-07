@@ -2,8 +2,11 @@
 
 require_once "app/core/Database.php";
 require_once "app/core/BaseModel.php";
-
 require_once "app/models/SettingModel.php";
+
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Create database connection
 $db = new Database();
