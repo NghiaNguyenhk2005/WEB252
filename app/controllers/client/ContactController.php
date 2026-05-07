@@ -1,40 +1,60 @@
 <?php
+
 require_once __DIR__ . '/../../models/ContactModel.php';
 
-class ContactController {
+class ContactController
+{
     private $contactModel;
 
-    public function __construct() {
-        global $conn; // Assuming you have a global connection variable
+    public function __construct($conn)
+    {
         $this->contactModel = new ContactModel($conn);
     }
 
-    public function index() {
-        // Render the contact page view
+    public function index()
+    {
         require_once __DIR__ . '/../../../views/client/contact.php';
-        }
+    }
 
-    public function submit() {
+    public function submit()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Server-side validation
-            $name = htmlspecialchars(trim($_POST['name'] ?? ''));
-            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-            $message = htmlspecialchars(trim($_POST['message'] ?? ''));
 
-            if (empty($name) || !filter_var($email, FILTER_VALIDATE_EMAIL) || empty($message)) {
-                // Handle error (e.g., set session error and redirect)
-                header("Location: index.php?url=contact&error=1");
+            $name = htmlspecialchars(trim($_POST['name'] ?? ''));
+
+            $email = filter_var(
+                $_POST['email'],
+                FILTER_SANITIZE_EMAIL
+            );
+
+            $message = htmlspecialchars(
+                trim($_POST['message'] ?? '')
+            );
+
+            if (
+                empty($name) ||
+                !filter_var($email, FILTER_VALIDATE_EMAIL) ||
+                empty($message)
+            ) {
+
+                header(
+                    "Location: index.php?url=contact&error=1"
+                );
+
                 exit;
             }
 
-            // Save to database
             $this->contactModel->createContact([
                 'name' => $name,
                 'email' => $email,
                 'message' => $message,
-                'user_id' => $_SESSION['user']['id'] ?? null // Nullable for guests
+                'user_id' => $_SESSION['user']['id'] ?? null
             ]);
-            header("Location: index.php?url=contact&success=1");
+
+            header(
+                "Location: index.php?url=contact&success=1"
+            );
+
             exit;
         }
     }
