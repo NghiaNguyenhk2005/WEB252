@@ -24,10 +24,20 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="mb-3">Liên hệ</h5>
                     <ul class="list-unstyled text-secondary">
-                        <li class="mb-2"><i class="bi bi-telephone-fill me-2"></i>0123 456 789</li>
-                        <li class="mb-2"><i class="bi bi-envelope-fill me-2"></i>contact@techsaas.vn</li>
-                        <li class="mb-2"><i class="bi bi-geo-alt-fill me-2"></i>Quận 1, TP. Hồ Chí Minh</li>
-                    </ul>
+                    <!-- Dynamic Contact Info -->
+                        <li class="mb-2">
+                            <i class="bi bi-telephone-fill me-2"></i>
+                            <?= htmlspecialchars($globalSettings['company_phone'] ?? '0123 456 789') ?>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            <?= htmlspecialchars($globalSettings['company_email'] ?? 'contact@techsaas.vn') ?>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt-fill me-2"></i>
+                            <?= htmlspecialchars($globalSettings['company_address'] ?? 'Quận 1, TP. Hồ Chí Minh') ?>
+                        </li>
+                </ul>
                 </div>
             </div>
             <div class="border-top border-secondary mt-4 pt-4 text-center text-secondary">
