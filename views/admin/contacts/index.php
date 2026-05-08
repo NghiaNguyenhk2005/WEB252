@@ -1,85 +1,182 @@
-<?php 
-require_once "views/admin/partials/header.php"; 
-require_once "views/admin/partials/sidebar.php"; 
-?>
+<?php include __DIR__ . '/../partials/header.php'; ?>
 
-<div class="main-content">
-    <div class="main-content-inner">
-        <div class="row">
-            <div class="col-12 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="header-title">Quản lý liên hệ</h4>
-                        
-                        <!-- Success Alert for better UX[cite: 10] -->
-                        <?php if (isset($_GET['success'])): ?>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <strong>Thành công!</strong> Trạng thái đã được cập nhật.
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span class="fa fa-times"></span>
+<!-- Page header -->
+<div class="srt-page-header">
+    <div>
+        <h4><i class="fa-solid fa-envelope me-2" style="color:var(--accent);"></i>Quản lý Liên hệ</h4>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/contacts" class="text-decoration-none">Admin</a></li>
+                <li class="breadcrumb-item active">Liên hệ</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+        <span class="srt-card-header" style="padding:6px 14px;background:#f8f9fc;border-radius:8px;border:1px solid #e9ecef;">
+            Tổng: <strong><?= (int)$total ?></strong> liên hệ
+        </span>
+    </div>
+</div>
+
+<!-- Alerts -->
+<?php if (isset($_GET['success'])): ?>
+    <div class="srt-alert srt-alert-success"><i class="fa-solid fa-check-circle me-2"></i>Cập nhật trạng thái thành công.</div>
+<?php endif; ?>
+<?php if (isset($_GET['deleted'])): ?>
+    <div class="srt-alert srt-alert-success"><i class="fa-solid fa-trash me-2"></i>Đã xoá liên hệ.</div>
+<?php endif; ?>
+
+<!-- Table card -->
+<div class="srt-card">
+    <div class="srt-card-header">
+        <span><i class="fa-solid fa-list me-2"></i>Danh sách liên hệ</span>
+    </div>
+    <div class="srt-card-body" style="padding:0;">
+        <div style="overflow-x:auto;">
+        <table class="srt-table">
+            <thead>
+                <tr>
+                    <th style="width:40px;">#</th>
+                    <th>Người gửi</th>
+                    <th>Email</th>
+                    <th>Nội dung</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày gửi</th>
+                    <th style="width:200px;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php
+            $stt = ($page - 1) * 15 + 1;
+            if ($contacts->num_rows === 0): ?>
+                <tr>
+                    <td colspan="7" class="text-center py-5" style="color:#aaa;">
+                        <i class="fa-solid fa-inbox fa-2x mb-2 d-block"></i>Chưa có liên hệ nào.
+                    </td>
+                </tr>
+            <?php else:
+                while ($c = $contacts->fetch_assoc()): ?>
+                <tr>
+                    <td style="color:#aaa;"><?= $stt++ ?></td>
+                    <td>
+                        <div class="fw-semibold" style="font-size:.88rem;"><?= htmlspecialchars($c['name']) ?></div>
+                    </td>
+                    <td>
+                        <a href="mailto:<?= htmlspecialchars($c['email']) ?>" class="text-decoration-none" style="font-size:.85rem;color:var(--accent);">
+                            <?= htmlspecialchars($c['email']) ?>
+                        </a>
+                    </td>
+                    <td style="max-width:260px;">
+                        <span style="font-size:.83rem;color:#555;" title="<?= htmlspecialchars($c['message']) ?>">
+                            <?= htmlspecialchars(mb_substr($c['message'], 0, 80)) ?><?= mb_strlen($c['message']) > 80 ? '…' : '' ?>
+                        </span>
+                        <!-- Full message modal trigger -->
+                        <br>
+                        <button class="btn btn-srt-primary btn-srt-sm mt-1"
+                                style="background:none;color:var(--accent);padding:0;font-size:.78rem;font-weight:600;"
+                                onclick="showMessage(<?= $c['id'] ?>, `<?= addslashes(htmlspecialchars($c['name'])) ?>`, `<?= addslashes(htmlspecialchars($c['message'])) ?>`)">
+                            Xem đầy đủ
+                        </button>
+                    </td>
+                    <td>
+                        <?php
+                        $statusMap = [
+                            'new'     => ['label' => 'Mới',       'class' => 'badge-new'],
+                            'read'    => ['label' => 'Đã đọc',    'class' => 'badge-read'],
+                            'replied' => ['label' => 'Đã phản hồi','class' => 'badge-replied'],
+                        ];
+                        $s = $statusMap[$c['status']] ?? $statusMap['new'];
+                        ?>
+                        <span class="<?= $s['class'] ?>"><?= $s['label'] ?></span>
+                    </td>
+                    <td style="font-size:.82rem;color:#888;white-space:nowrap;">
+                        <?= $c['created_at'] ? date('d/m/Y H:i', strtotime($c['created_at'])) : '—' ?>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <!-- Status update dropdown -->
+                            <div class="dropdown">
+                                <button class="btn-srt-primary btn-srt-sm dropdown-toggle" data-bs-toggle="dropdown" style="border-radius:5px;cursor:pointer;">
+                                    <i class="fa-solid fa-tag"></i>
                                 </button>
+                                <ul class="dropdown-menu shadow border-0" style="font-size:.82rem;min-width:140px;">
+                                    <?php foreach (['new' => 'Mới', 'read' => 'Đã đọc', 'replied' => 'Đã phản hồi'] as $val => $label): ?>
+                                        <li>
+                                            <form method="POST" action="/admin/contacts/update/<?= $c['id'] ?>">
+                                                <input type="hidden" name="status" value="<?= $val ?>">
+                                                <button type="submit" class="dropdown-item <?= $c['status'] === $val ? 'fw-bold' : '' ?>">
+                                                    <?= $c['status'] === $val ? '✓ ' : '' ?><?= $label ?>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
                             </div>
-                        <?php endif; ?>
-
-                        <div class="single-table">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center">
-                                    <thead class="text-uppercase bg-light">
-                                        <tr>
-                                            <th>Ngày gửi</th>
-                                            <th>Họ tên</th>
-                                            <th>Email</th>
-                                            <th>Nội dung</th>
-                                            <th>Trạng thái</th>
-                                            <th>Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Changed variable to $contacts to match Controller[cite: 10] -->
-                                        <?php while($row = $contacts->fetch_assoc()): ?>
-                                        <tr>
-                                            <td><?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></td>
-                                            <td><?= htmlspecialchars($row['full_name']) ?></td>
-                                            <td><?= htmlspecialchars($row['email']) ?></td>
-                                            <td class="text-left"><?= mb_strimwidth($row['message'], 0, 50, "...") ?></td>
-                                            <td>
-                                                <!-- Updated logic for string-based status[cite: 10] -->
-                                                <span class="badge <?= $row['status'] === 'read' ? 'badge-success' : 'badge-warning' ?>">
-                                                    <?= $row['status'] === 'read' ? 'Đã đọc' : 'Mới' ?>
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <div class="d-flex justify-content-center">
-                                                    <?php if($row['status'] !== 'read'): ?>
-                                                        <!-- POST Form for Security[cite: 10] -->
-                                                        <form action="/admin/contacts/update/<?= $row['id'] ?>" method="POST" class="mr-2">
-                                                            <input type="hidden" name="status" value="read">
-                                                            <button type="submit" class="btn btn-xs btn-success" title="Đánh dấu đã đọc">
-                                                                <i class="fa fa-check"></i>
-                                                            </button>
-                                                        </form>
-                                                    <?php endif; ?>
-
-                                                    <!-- Delete button using the route in your index.php[cite: 10] -->
-                                                    <a href="/admin/contacts/delete/<?= $row['id'] ?>" 
-                                                       class="btn btn-xs btn-danger" 
-                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa liên hệ này?')"
-                                                       title="Xóa">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <?php endwhile; ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                            <!-- Delete -->
+                            <form method="POST" action="/admin/contacts/delete/<?= $c['id'] ?>"
+                                  onsubmit="return confirm('Xác nhận xoá liên hệ này?')">
+                                <button type="submit" class="btn-srt-danger btn-srt-sm">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
-                    </div>
-                </div>
+                    </td>
+                </tr>
+                <?php endwhile; endif; ?>
+            </tbody>
+        </table>
+        </div>
+
+        <!-- Pagination -->
+        <?php if ($pages > 1): ?>
+        <div style="padding:16px 20px;">
+            <div class="srt-pagination">
+                <?php if ($page > 1): ?>
+                    <a href="/admin/contacts?page=<?= $page - 1 ?>"><i class="fa-solid fa-chevron-left"></i></a>
+                <?php else: ?>
+                    <span class="disabled"><i class="fa-solid fa-chevron-left"></i></span>
+                <?php endif; ?>
+
+                <?php for ($i = 1; $i <= $pages; $i++): ?>
+                    <?php if ($i == $page): ?>
+                        <span class="active"><?= $i ?></span>
+                    <?php elseif (abs($i - $page) <= 2 || $i == 1 || $i == $pages): ?>
+                        <a href="/admin/contacts?page=<?= $i ?>"><?= $i ?></a>
+                    <?php elseif (abs($i - $page) == 3): ?>
+                        <span class="disabled">…</span>
+                    <?php endif; ?>
+                <?php endfor; ?>
+
+                <?php if ($page < $pages): ?>
+                    <a href="/admin/contacts?page=<?= $page + 1 ?>"><i class="fa-solid fa-chevron-right"></i></a>
+                <?php else: ?>
+                    <span class="disabled"><i class="fa-solid fa-chevron-right"></i></span>
+                <?php endif; ?>
             </div>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- Full message modal -->
+<div class="modal fade" id="msgModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold" id="msgModalTitle"></h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-2" id="msgModalBody" style="white-space:pre-wrap;font-size:.9rem;color:#444;line-height:1.7;"></div>
         </div>
     </div>
 </div>
 
-<?php require_once "views/admin/partials/footer.php"; ?>
+<script>
+function showMessage(id, name, message) {
+    document.getElementById('msgModalTitle').textContent = 'Tin nhắn từ: ' + name;
+    document.getElementById('msgModalBody').textContent  = message;
+    new bootstrap.Modal(document.getElementById('msgModal')).show();
+}
+</script>
+
+<?php include __DIR__ . '/../partials/footer.php'; ?>

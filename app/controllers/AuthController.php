@@ -16,7 +16,6 @@ class AuthController extends BaseController {
             $password = $_POST['password'] ?? '';
             $confirm  = $_POST['confirm_password'] ?? '';
 
-            // Server-side validation
             if (empty($username) || empty($email) || empty($password)) {
                 $error = 'Vui lòng điền đầy đủ thông tin.';
             } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -59,14 +58,16 @@ class AuthController extends BaseController {
                     if ($user['status'] == 0) {
                         $error = 'Tài khoản của bạn đã bị khoá.';
                     } else {
-                        // Get role
-                        $roleResult = $this->authModel->conn->query(
+                        // Get role via safe query
+                        $uid        = (int)$user['id'];
+                        $conn       = $this->authModel->getConn();
+                        $roleResult = $conn->query(
                             "SELECT r.name FROM roles r
                              INNER JOIN user_roles ur ON r.id = ur.role_id
-                             WHERE ur.user_id = {$user['id']}
+                             WHERE ur.user_id = $uid
                              LIMIT 1"
                         );
-                        $roleRow = $roleResult ? $roleResult->fetch_assoc() : null;
+                        $roleRow      = $roleResult ? $roleResult->fetch_assoc() : null;
                         $user['role'] = $roleRow['name'] ?? 'member';
 
                         $_SESSION['user'] = $user;
@@ -107,30 +108,28 @@ class AuthController extends BaseController {
                 if (empty($username)) {
                     $error = 'Tên không được để trống.';
                 } else {
-                    // Handle avatar upload
                     $avatarPath = $user['avatar'];
                     if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
-                        $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+                        $ext     = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
                         $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
                         if (in_array($ext, $allowed)) {
                             $dir = 'uploads/avatars/';
                             if (!is_dir($dir)) mkdir($dir, 0777, true);
-                            $filename = 'avatar_' . $_SESSION['user']['id'] . '_' . time() . '.' . $ext;
+                            $filename = 'avatar_' . (int)$_SESSION['user']['id'] . '_' . time() . '.' . $ext;
                             if (move_uploaded_file($_FILES['avatar']['tmp_name'], $dir . $filename)) {
                                 $avatarPath = $dir . $filename;
                             }
                         }
                     }
 
-                    $this->authModel->update($_SESSION['user']['id'], [
+                    $this->authModel->update((int)$_SESSION['user']['id'], [
                         'username' => $username,
                         'avatar'   => $avatarPath,
                     ]);
 
-                    // Refresh session
                     $_SESSION['user']['username'] = $username;
                     $_SESSION['user']['avatar']   = $avatarPath;
-                    $user = $this->authModel->findById($_SESSION['user']['id']);
+                    $user    = $this->authModel->findById((int)$_SESSION['user']['id']);
                     $success = 'Cập nhật thông tin thành công.';
                 }
 
@@ -146,7 +145,7 @@ class AuthController extends BaseController {
                 } elseif ($new !== $confirm) {
                     $error = 'Xác nhận mật khẩu không khớp.';
                 } else {
-                    $this->authModel->update($_SESSION['user']['id'], [
+                    $this->authModel->update((int)$_SESSION['user']['id'], [
                         'password' => password_hash($new, PASSWORD_DEFAULT),
                     ]);
                     $success = 'Đổi mật khẩu thành công.';
