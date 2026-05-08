@@ -1,8 +1,7 @@
 <?php
 class AuthMiddleware {
-    public static function check() {
-        session_start();
 
+    public static function check() {
         if (!isset($_SESSION['user'])) {
             header("Location: /login");
             exit;
@@ -10,10 +9,14 @@ class AuthMiddleware {
     }
 
     public static function admin() {
-        session_start();
+        if (!isset($_SESSION['user'])) {
+            header("Location: /login");
+            exit;
+        }
 
-        if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-            echo "403 Forbidden";
+        $role = $_SESSION['user']['role'] ?? '';
+        if ($role !== 'admin') {
+            header("Location: /");
             exit;
         }
     }
