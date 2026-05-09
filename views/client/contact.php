@@ -7,12 +7,12 @@
             <div class="col-lg-6" data-aos="fade-right">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-2">
-                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted small">Trang chủ</a></li>
+                        <li class="breadcrumb-item"><a href="<?= BASE_PATH ?>/" class="text-decoration-none text-muted small">Trang chủ</a></li>
                         <li class="breadcrumb-item active text-muted small">Liên hệ</li>
                     </ol>
                 </nav>
                 <h1 class="display-5 fw-bold mb-3">Liên hệ với chúng tôi</h1>
-                <p class="lead text-muted mb-0">Đội ngũ hỗ trợ của <?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> sẵn sàng giải đáp mọi thắc mắc của bạn trong vòng 24 giờ.</p>
+                <p class="lead text-muted mb-0">Đội ngũ hỗ trợ của <?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> sẵn sàng giải đáp mọi thắc mắc trong vòng 24 giờ.</p>
             </div>
             <div class="col-lg-5 offset-lg-1 mt-4 mt-lg-0 text-center" data-aos="fade-left">
                 <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10" style="width:120px;height:120px;">
@@ -23,7 +23,7 @@
     </div>
 </section>
 
-<!-- Contact Info Cards -->
+<!-- Info Cards -->
 <section class="py-5 bg-white">
     <div class="container">
         <div class="row g-4 mb-5">
@@ -33,8 +33,7 @@
                         <div class="icon-box mx-auto mb-3"><i class="bi bi-telephone-fill"></i></div>
                         <h5 class="fw-bold mb-2">Điện thoại</h5>
                         <p class="text-muted mb-1 small">Thứ 2 – Thứ 6 | 8:00 – 17:00</p>
-                        <a href="tel:<?= htmlspecialchars($globalSettings['company_phone'] ?? '0123456789') ?>"
-                           class="text-primary fw-semibold text-decoration-none">
+                        <a href="tel:<?= htmlspecialchars($globalSettings['company_phone'] ?? '') ?>" class="text-primary fw-semibold text-decoration-none">
                             <?= htmlspecialchars($globalSettings['company_phone'] ?? '0123 456 789') ?>
                         </a>
                     </div>
@@ -46,8 +45,7 @@
                         <div class="icon-box mx-auto mb-3"><i class="bi bi-envelope-fill"></i></div>
                         <h5 class="fw-bold mb-2">Email</h5>
                         <p class="text-muted mb-1 small">Phản hồi trong vòng 24 giờ</p>
-                        <a href="mailto:<?= htmlspecialchars($globalSettings['company_email'] ?? 'contact@techsaas.vn') ?>"
-                           class="text-primary fw-semibold text-decoration-none">
+                        <a href="mailto:<?= htmlspecialchars($globalSettings['company_email'] ?? '') ?>" class="text-primary fw-semibold text-decoration-none">
                             <?= htmlspecialchars($globalSettings['company_email'] ?? 'contact@techsaas.vn') ?>
                         </a>
                     </div>
@@ -67,9 +65,7 @@
             </div>
         </div>
 
-        <!-- Contact Form + Map -->
         <div class="row g-5 align-items-start">
-
             <!-- Form -->
             <div class="col-lg-6" data-aos="fade-right">
                 <div class="card border-0 shadow-sm rounded-4 p-2">
@@ -79,16 +75,16 @@
 
                         <?php if (isset($_GET['success'])): ?>
                             <div class="alert alert-success rounded-3 fw-semibold small">
-                                <i class="bi bi-check-circle-fill me-2"></i>Tin nhắn đã được gửi thành công! Chúng tôi sẽ liên hệ lại sớm.
+                                <i class="bi bi-check-circle-fill me-2"></i>Tin nhắn đã được gửi thành công!
                             </div>
                         <?php endif; ?>
                         <?php if (isset($_GET['error'])): ?>
                             <div class="alert alert-danger rounded-3 fw-semibold small">
-                                <i class="bi bi-exclamation-circle-fill me-2"></i>Vui lòng kiểm tra lại thông tin đã nhập.
+                                <i class="bi bi-exclamation-circle-fill me-2"></i>Vui lòng kiểm tra lại thông tin.
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="/contact/submit" id="contactForm" novalidate>
+                        <form method="POST" action="<?= BASE_PATH ?>/contact/submit" id="contactForm" novalidate>
                             <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Họ và tên <span class="text-danger">*</span></label>
@@ -100,7 +96,6 @@
                                            value="<?= htmlspecialchars($_POST['name'] ?? '') ?>"
                                            required minlength="2" maxlength="100">
                                 </div>
-                                <div class="invalid-feedback">Vui lòng nhập họ tên (ít nhất 2 ký tự).</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Email <span class="text-danger">*</span></label>
@@ -112,13 +107,12 @@
                                            value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                            required>
                                 </div>
-                                <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label fw-semibold small">Nội dung <span class="text-danger">*</span></label>
                                 <textarea name="message" id="messageInput" rows="5"
                                           class="form-control rounded-3"
-                                          placeholder="Nhập nội dung tin nhắn của bạn..."
+                                          placeholder="Nhập nội dung tin nhắn..."
                                           required minlength="10" maxlength="2000"><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
                                 <div class="d-flex justify-content-between mt-1">
                                     <div class="text-danger small fw-semibold" id="msgError" style="display:none;"></div>
@@ -133,14 +127,12 @@
                 </div>
             </div>
 
-            <!-- Map + Working hours -->
+            <!-- Map + Hours -->
             <div class="col-lg-6" data-aos="fade-left">
                 <div class="rounded-4 overflow-hidden shadow-sm mb-4" style="height:300px;">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4241974585546!2d106.69877687481609!3d10.77320898939613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3a9d8d4fbb%3A0xb5b2b9c0b9c5c5e5!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBDw7RuZyBuZ2jhu4cgU8OgaSBnw7Ju!5e0!3m2!1svi!2svn!4v1700000000000"
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4241974585546!2d106.69877687481609!3d10.77320898939613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3a9d8d4fbb%3A0xb5b2b9c0b9c5c5e5!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBDw7RuZyBuZ2h54buHIFPDoGkgR8Oybg!5e0!3m2!1svi!2svn!4v1700000000000"
                         width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
                 <div class="card border-0 shadow-sm rounded-4 p-4">
                     <h6 class="fw-bold mb-3"><i class="bi bi-clock-fill text-primary me-2"></i>Giờ làm việc</h6>
@@ -169,12 +161,12 @@
     <div class="container" data-aos="zoom-in">
         <div class="cta-section shadow-lg">
             <h2 class="display-5 fw-bold mb-4">Cần hỗ trợ nhanh hơn?</h2>
-            <p class="lead mb-5 opacity-75">Đội ngũ kỹ thuật của chúng tôi hoạt động 24/7 để hỗ trợ doanh nghiệp của bạn.</p>
-            <a href="tel:<?= htmlspecialchars($globalSettings['company_phone'] ?? '0123456789') ?>"
+            <p class="lead mb-5 opacity-75">Đội ngũ kỹ thuật của chúng tôi hoạt động 24/7.</p>
+            <a href="tel:<?= htmlspecialchars($globalSettings['company_phone'] ?? '') ?>"
                class="btn btn-light text-primary btn-lg px-5 rounded-pill shadow me-3 mb-3 mb-md-0">
                 <i class="bi bi-telephone-fill me-2"></i>Gọi ngay
             </a>
-            <a href="mailto:<?= htmlspecialchars($globalSettings['company_email'] ?? 'contact@techsaas.vn') ?>"
+            <a href="mailto:<?= htmlspecialchars($globalSettings['company_email'] ?? '') ?>"
                class="btn btn-outline-light btn-lg px-5 rounded-pill mb-3 mb-md-0">
                 <i class="bi bi-envelope-fill me-2"></i>Gửi email
             </a>
@@ -183,7 +175,6 @@
 </section>
 
 <script>
-// Character counter
 const msgInput = document.getElementById('messageInput');
 const charCount = document.getElementById('charCount');
 if (msgInput) {
@@ -192,24 +183,16 @@ if (msgInput) {
         charCount.classList.toggle('text-warning', this.value.length > 1800);
     });
 }
-
-// JS validation
 document.getElementById('contactForm').addEventListener('submit', function(e) {
     let valid = true;
     const name  = document.getElementById('nameInput');
     const email = document.getElementById('emailInput');
     const msg   = document.getElementById('messageInput');
     const msgErr = document.getElementById('msgError');
-
     [name, email, msg].forEach(el => el.classList.remove('is-invalid'));
     msgErr.style.display = 'none';
-
-    if (!name.value.trim() || name.value.trim().length < 2) {
-        name.classList.add('is-invalid'); valid = false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-        email.classList.add('is-invalid'); valid = false;
-    }
+    if (!name.value.trim() || name.value.trim().length < 2) { name.classList.add('is-invalid'); valid = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { email.classList.add('is-invalid'); valid = false; }
     if (!msg.value.trim() || msg.value.trim().length < 10) {
         msg.classList.add('is-invalid');
         msgErr.textContent = 'Nội dung ít nhất 10 ký tự.';
