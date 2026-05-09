@@ -1,6 +1,5 @@
 <?php include __DIR__ . '/../partials/header.php'; ?>
 
-<!-- Page header -->
 <div class="srt-page-header">
     <div>
         <h4><i class="fa-solid fa-envelope me-2" style="color:var(--accent);"></i>Quản lý Liên hệ</h4>
@@ -11,14 +10,11 @@
             </ol>
         </nav>
     </div>
-    <div class="d-flex gap-2 align-items-center">
-        <span class="srt-card-header" style="padding:6px 14px;background:#f8f9fc;border-radius:8px;border:1px solid #e9ecef;">
-            Tổng: <strong><?= (int)$total ?></strong> liên hệ
-        </span>
-    </div>
+    <span class="srt-card-header" style="padding:6px 14px;background:#f8f9fc;border-radius:8px;border:1px solid #e9ecef;">
+        Tổng: <strong><?= (int)$total ?></strong>liên hệ
+    </span>
 </div>
 
-<!-- Alerts -->
 <?php if (isset($_GET['success'])): ?>
     <div class="srt-alert srt-alert-success"><i class="fa-solid fa-check-circle me-2"></i>Cập nhật trạng thái thành công.</div>
 <?php endif; ?>
@@ -26,7 +22,6 @@
     <div class="srt-alert srt-alert-success"><i class="fa-solid fa-trash me-2"></i>Đã xoá liên hệ.</div>
 <?php endif; ?>
 
-<!-- Table card -->
 <div class="srt-card">
     <div class="srt-card-header">
         <span><i class="fa-solid fa-list me-2"></i>Danh sách liên hệ</span>
@@ -42,7 +37,7 @@
                     <th>Nội dung</th>
                     <th>Trạng thái</th>
                     <th>Ngày gửi</th>
-                    <th style="width:200px;">Thao tác</th>
+                    <th style="width:160px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,32 +53,28 @@
                 while ($c = $contacts->fetch_assoc()): ?>
                 <tr>
                     <td style="color:#aaa;"><?= $stt++ ?></td>
-                    <td>
-                        <div class="fw-semibold" style="font-size:.88rem;"><?= htmlspecialchars($c['name']) ?></div>
-                    </td>
+                    <td><span class="fw-semibold" style="font-size:.88rem;"><?= htmlspecialchars($c['name']) ?></span></td>
                     <td>
                         <a href="mailto:<?= htmlspecialchars($c['email']) ?>" class="text-decoration-none" style="font-size:.85rem;color:var(--accent);">
                             <?= htmlspecialchars($c['email']) ?>
                         </a>
                     </td>
                     <td style="max-width:260px;">
-                        <span style="font-size:.83rem;color:#555;" title="<?= htmlspecialchars($c['message']) ?>">
+                        <span style="font-size:.83rem;color:#555;">
                             <?= htmlspecialchars(mb_substr($c['message'], 0, 80)) ?><?= mb_strlen($c['message']) > 80 ? '…' : '' ?>
                         </span>
-                        <!-- Full message modal trigger -->
                         <br>
-                        <button class="btn btn-srt-primary btn-srt-sm mt-1"
-                                style="background:none;color:var(--accent);padding:0;font-size:.78rem;font-weight:600;"
-                                onclick="showMessage(<?= $c['id'] ?>, `<?= addslashes(htmlspecialchars($c['name'])) ?>`, `<?= addslashes(htmlspecialchars($c['message'])) ?>`)">
+                        <button type="button" style="background:none;border:none;color:var(--accent);padding:0;font-size:.78rem;font-weight:600;cursor:pointer;"
+                                onclick="showMessage(`<?= addslashes(htmlspecialchars($c['name'])) ?>`, `<?= addslashes(htmlspecialchars($c['message'])) ?>`)">
                             Xem đầy đủ
                         </button>
                     </td>
                     <td>
                         <?php
                         $statusMap = [
-                            'new'     => ['label' => 'Mới',       'class' => 'badge-new'],
-                            'read'    => ['label' => 'Đã đọc',    'class' => 'badge-read'],
-                            'replied' => ['label' => 'Đã phản hồi','class' => 'badge-replied'],
+                            'new'     => ['label' => 'Mới',         'class' => 'badge-new'],
+                            'read'    => ['label' => 'Đã đọc',      'class' => 'badge-read'],
+                            'replied' => ['label' => 'Đã phản hồi', 'class' => 'badge-replied'],
                         ];
                         $s = $statusMap[$c['status']] ?? $statusMap['new'];
                         ?>
@@ -94,27 +85,29 @@
                     </td>
                     <td>
                         <div class="d-flex gap-1 flex-wrap">
-                            <!-- Status update dropdown -->
+                            <!-- Status dropdown -->
                             <div class="dropdown">
-                                <button class="btn-srt-primary btn-srt-sm dropdown-toggle" data-bs-toggle="dropdown" style="border-radius:5px;cursor:pointer;">
+                                <button class="btn-srt-primary btn-srt-sm dropdown-toggle" data-bs-toggle="dropdown" style="cursor:pointer;">
                                     <i class="fa-solid fa-tag"></i>
                                 </button>
-                                <ul class="dropdown-menu shadow border-0" style="font-size:.82rem;min-width:140px;">
+                                <ul class="dropdown-menu shadow border-0" style="font-size:.82rem;min-width:150px;">
                                     <?php foreach (['new' => 'Mới', 'read' => 'Đã đọc', 'replied' => 'Đã phản hồi'] as $val => $label): ?>
-                                        <li>
-                                            <form method="POST" action="/admin/contacts/update/<?= $c['id'] ?>">
-                                                <input type="hidden" name="status" value="<?= $val ?>">
-                                                <button type="submit" class="dropdown-item <?= $c['status'] === $val ? 'fw-bold' : '' ?>">
-                                                    <?= $c['status'] === $val ? '✓ ' : '' ?><?= $label ?>
-                                                </button>
-                                            </form>
-                                        </li>
+                                    <li>
+                                        <form method="POST" action="/admin/contacts/update/<?= $c['id'] ?>">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="status" value="<?= $val ?>">
+                                            <button type="submit" class="dropdown-item <?= $c['status'] === $val ? 'fw-bold' : '' ?>">
+                                                <?= $c['status'] === $val ? '✓ ' : '' ?><?= $label ?>
+                                            </button>
+                                        </form>
+                                    </li>
                                     <?php endforeach; ?>
                                 </ul>
                             </div>
                             <!-- Delete -->
                             <form method="POST" action="/admin/contacts/delete/<?= $c['id'] ?>"
                                   onsubmit="return confirm('Xác nhận xoá liên hệ này?')">
+                                <?= csrf_field() ?>
                                 <button type="submit" class="btn-srt-danger btn-srt-sm">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -127,7 +120,6 @@
         </table>
         </div>
 
-        <!-- Pagination -->
         <?php if ($pages > 1): ?>
         <div style="padding:16px 20px;">
             <div class="srt-pagination">
@@ -136,7 +128,6 @@
                 <?php else: ?>
                     <span class="disabled"><i class="fa-solid fa-chevron-left"></i></span>
                 <?php endif; ?>
-
                 <?php for ($i = 1; $i <= $pages; $i++): ?>
                     <?php if ($i == $page): ?>
                         <span class="active"><?= $i ?></span>
@@ -146,7 +137,6 @@
                         <span class="disabled">…</span>
                     <?php endif; ?>
                 <?php endfor; ?>
-
                 <?php if ($page < $pages): ?>
                     <a href="/admin/contacts?page=<?= $page + 1 ?>"><i class="fa-solid fa-chevron-right"></i></a>
                 <?php else: ?>
@@ -166,13 +156,14 @@
                 <h6 class="modal-title fw-bold" id="msgModalTitle"></h6>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body pt-2" id="msgModalBody" style="white-space:pre-wrap;font-size:.9rem;color:#444;line-height:1.7;"></div>
+            <div class="modal-body pt-2" id="msgModalBody"
+                 style="white-space:pre-wrap;font-size:.9rem;color:#444;line-height:1.7;max-height:400px;overflow-y:auto;"></div>
         </div>
     </div>
 </div>
 
 <script>
-function showMessage(id, name, message) {
+function showMessage(name, message) {
     document.getElementById('msgModalTitle').textContent = 'Tin nhắn từ: ' + name;
     document.getElementById('msgModalBody').textContent  = message;
     new bootstrap.Modal(document.getElementById('msgModal')).show();

@@ -27,7 +27,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="/login" novalidate>
+                        <form method="POST" action="<?= BASE_PATH ?>/login" novalidate>
                             <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Email</label>
@@ -58,7 +58,7 @@
 
                         <p class="text-center text-muted small mt-4 mb-0">
                             Chưa có tài khoản?
-                            <a href="/register" class="text-primary fw-semibold text-decoration-none">Đăng ký ngay</a>
+                            <a href="<?= BASE_PATH ?>/register" class="text-primary fw-semibold text-decoration-none">Đăng ký ngay</a>
                         </p>
                     </div>
                 </div>

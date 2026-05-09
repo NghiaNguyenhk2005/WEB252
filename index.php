@@ -1,5 +1,10 @@
 <?php
 
+// ── Base path for redirects ───────────────────────────────────
+// If running at localhost/WEB252, set this to '/WEB252'
+// If running at localhost (root), set this to ''
+define('BASE_PATH', '/WEB252');
+
 spl_autoload_register(function ($class) {
     $base  = __DIR__ . '/';
     $paths = [
@@ -21,7 +26,7 @@ spl_autoload_register(function ($class) {
 session_start();
 require_once __DIR__ . '/app/core/helpers.php';
 
-// Dev mode: set to false on production
+// Dev mode
 define('DEV_MODE', true);
 if (DEV_MODE) {
     error_reporting(E_ALL);
@@ -31,16 +36,16 @@ if (DEV_MODE) {
     ini_set('display_errors', 0);
 }
 
-// CSRF token generation
+// CSRF token
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// Database connection
+// Database
 $db   = new Database();
 $conn = $db->getConnection();
 
-// Global settings available to all views
+// Global settings
 $settingModel   = new SettingModel($conn);
 $globalSettings = $settingModel->getAllSettings();
 
@@ -60,12 +65,12 @@ switch (true) {
         break;
 
     case $url === 'login':
-        if (isset($_SESSION['user'])) { header('Location: /'); exit; }
+        if (isset($_SESSION['user'])) { header('Location: ' . BASE_PATH . '/'); exit; }
         (new AuthController($conn))->login();
         break;
 
     case $url === 'register':
-        if (isset($_SESSION['user'])) { header('Location: /'); exit; }
+        if (isset($_SESSION['user'])) { header('Location: ' . BASE_PATH . '/'); exit; }
         (new AuthController($conn))->register();
         break;
 
@@ -113,8 +118,8 @@ switch (true) {
         $sliderId     = (int)$segments[3];
         $sliderAction = $segments[4] ?? '';
         $ctrl         = new AdminSettingController($conn);
-        if ($sliderAction === 'delete')       $ctrl->sliderDelete($sliderId);
-        elseif ($sliderAction === 'toggle')   $ctrl->sliderToggle($sliderId);
+        if ($sliderAction === 'delete')     $ctrl->sliderDelete($sliderId);
+        elseif ($sliderAction === 'toggle') $ctrl->sliderToggle($sliderId);
         else { http_response_code(404); (new HomeController($conn))->index(); }
         break;
 

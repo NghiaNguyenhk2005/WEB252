@@ -6,14 +6,17 @@ class BaseController {
         require_once __DIR__ . '/../../views/' . $path . '.php';
     }
 
-    protected function redirect($url) {
-        header("Location: $url");
+    /**
+     * Redirect using BASE_PATH prefix.
+     * Always pass a path starting with '/', e.g. redirect('/login')
+     */
+    protected function redirect($path) {
+        header('Location: ' . BASE_PATH . $path);
         exit;
     }
 
     /**
      * Verify CSRF token on POST requests.
-     * Call at the top of any method that handles a destructive POST.
      */
     protected function verifyCsrf() {
         $token = $_POST['csrf_token'] ?? '';

@@ -12,7 +12,7 @@
                     </ol>
                 </nav>
                 <h1 class="display-5 fw-bold mb-3">Liên hệ với chúng tôi</h1>
-                <p class="lead text-muted mb-0">Đội ngũ hỗ trợ của TechSaaS sẵn sàng giải đáp mọi thắc mắc của bạn trong vòng 24 giờ.</p>
+                <p class="lead text-muted mb-0">Đội ngũ hỗ trợ của <?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> sẵn sàng giải đáp mọi thắc mắc của bạn trong vòng 24 giờ.</p>
             </div>
             <div class="col-lg-5 offset-lg-1 mt-4 mt-lg-0 text-center" data-aos="fade-left">
                 <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10" style="width:120px;height:120px;">
@@ -79,7 +79,7 @@
 
                         <?php if (isset($_GET['success'])): ?>
                             <div class="alert alert-success rounded-3 fw-semibold small">
-                                <i class="bi bi-check-circle-fill me-2"></i>Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại sớm.
+                                <i class="bi bi-check-circle-fill me-2"></i>Tin nhắn đã được gửi thành công! Chúng tôi sẽ liên hệ lại sớm.
                             </div>
                         <?php endif; ?>
                         <?php if (isset($_GET['error'])): ?>
@@ -89,12 +89,13 @@
                         <?php endif; ?>
 
                         <form method="POST" action="/contact/submit" id="contactForm" novalidate>
+                            <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Họ và tên <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
                                     <input type="text" name="name" id="nameInput"
-                                           class="form-control border-start-0 ps-0 rounded-end"
+                                           class="form-control border-start-0 ps-0"
                                            placeholder="Nguyễn Văn A"
                                            value="<?= htmlspecialchars($_POST['name'] ?? '') ?>"
                                            required minlength="2" maxlength="100">
@@ -106,7 +107,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
                                     <input type="email" name="email" id="emailInput"
-                                           class="form-control border-start-0 ps-0 rounded-end"
+                                           class="form-control border-start-0 ps-0"
                                            placeholder="you@example.com"
                                            value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                            required>
@@ -120,7 +121,7 @@
                                           placeholder="Nhập nội dung tin nhắn của bạn..."
                                           required minlength="10" maxlength="2000"><?= htmlspecialchars($_POST['message'] ?? '') ?></textarea>
                                 <div class="d-flex justify-content-between mt-1">
-                                    <div class="invalid-feedback d-block text-danger small" id="msgError" style="display:none!important;"></div>
+                                    <div class="text-danger small fw-semibold" id="msgError" style="display:none;"></div>
                                     <small class="text-muted ms-auto" id="charCount">0 / 2000</small>
                                 </div>
                             </div>
@@ -132,18 +133,15 @@
                 </div>
             </div>
 
-            <!-- Map / Extra Info -->
+            <!-- Map + Working hours -->
             <div class="col-lg-6" data-aos="fade-left">
-                <!-- Embedded Map placeholder (Google Maps iframe) -->
                 <div class="rounded-4 overflow-hidden shadow-sm mb-4" style="height:300px;">
                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4667!2d106.698!3d10.771!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTDCsDQ2JzE1LjYiTiAxMDbCsDQxJzUyLjgiRQ!5e0!3m2!1svi!2svn!4v1700000000000"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4241974585546!2d106.69877687481609!3d10.77320898939613!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3a9d8d4fbb%3A0xb5b2b9c0b9c5c5e5!2zVHLGsOG7nW5nIMSQ4bqhaSBI4buNYyBDw7RuZyBuZ2jhu4cgU8OgaSBnw7Ju!5e0!3m2!1svi!2svn!4v1700000000000"
                         width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
                         referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
-
-                <!-- Working hours -->
                 <div class="card border-0 shadow-sm rounded-4 p-4">
                     <h6 class="fw-bold mb-3"><i class="bi bi-clock-fill text-primary me-2"></i>Giờ làm việc</h6>
                     <ul class="list-unstyled mb-0">
@@ -166,7 +164,7 @@
     </div>
 </section>
 
-<!-- CTA Section (same style as home.php) -->
+<!-- CTA -->
 <section class="py-5 mb-5">
     <div class="container" data-aos="zoom-in">
         <div class="cta-section shadow-lg">
@@ -185,37 +183,37 @@
 </section>
 
 <script>
-// Character counter for message
-const msgInput    = document.getElementById('messageInput');
-const charCount   = document.getElementById('charCount');
+// Character counter
+const msgInput = document.getElementById('messageInput');
+const charCount = document.getElementById('charCount');
 if (msgInput) {
     msgInput.addEventListener('input', function() {
         charCount.textContent = this.value.length + ' / 2000';
-        if (this.value.length > 1800) charCount.classList.add('text-warning');
-        else charCount.classList.remove('text-warning');
+        charCount.classList.toggle('text-warning', this.value.length > 1800);
     });
 }
 
-// Client-side validation
+// JS validation
 document.getElementById('contactForm').addEventListener('submit', function(e) {
     let valid = true;
     const name  = document.getElementById('nameInput');
     const email = document.getElementById('emailInput');
     const msg   = document.getElementById('messageInput');
+    const msgErr = document.getElementById('msgError');
 
     [name, email, msg].forEach(el => el.classList.remove('is-invalid'));
+    msgErr.style.display = 'none';
 
     if (!name.value.trim() || name.value.trim().length < 2) {
         name.classList.add('is-invalid'); valid = false;
     }
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRe.test(email.value.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
         email.classList.add('is-invalid'); valid = false;
     }
     if (!msg.value.trim() || msg.value.trim().length < 10) {
         msg.classList.add('is-invalid');
-        document.getElementById('msgError').textContent = 'Nội dung ít nhất 10 ký tự.';
-        document.getElementById('msgError').style.display = 'block';
+        msgErr.textContent = 'Nội dung ít nhất 10 ký tự.';
+        msgErr.style.display = 'block';
         valid = false;
     }
     if (!valid) e.preventDefault();

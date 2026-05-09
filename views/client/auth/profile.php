@@ -4,7 +4,6 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width:52px;height:52px;">
                         <i class="bi bi-person-gear text-primary fs-4"></i>
@@ -27,19 +26,18 @@
                 <?php endif; ?>
 
                 <div class="row g-4">
+                    <!-- Update Info -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-body p-4">
-                                <h6 class="fw-bold mb-4">
-                                    <i class="bi bi-pencil-square me-2 text-primary"></i>Cập nhật thông tin
-                                </h6>
-                                <form method="POST" action="/profile" enctype="multipart/form-data">
+                                <h6 class="fw-bold mb-4"><i class="bi bi-pencil-square me-2 text-primary"></i>Cập nhật thông tin</h6>
+                                <form method="POST" action="<?= BASE_PATH ?>/profile" enctype="multipart/form-data">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="update_info">
                                     <div class="text-center mb-4">
                                         <div class="position-relative d-inline-block">
                                             <?php if (!empty($user['avatar'])): ?>
-                                                <img src="/<?= htmlspecialchars($user['avatar']) ?>"
+                                                <img src="<?= BASE_PATH ?>/<?= htmlspecialchars($user['avatar']) ?>"
                                                      id="avatarPreview"
                                                      class="rounded-circle border border-3 border-primary"
                                                      style="width:90px;height:90px;object-fit:cover;">
@@ -78,13 +76,12 @@
                         </div>
                     </div>
 
+                    <!-- Change Password -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-body p-4">
-                                <h6 class="fw-bold mb-4">
-                                    <i class="bi bi-shield-lock me-2 text-warning"></i>Đổi mật khẩu
-                                </h6>
-                                <form method="POST" action="/profile" id="pwdForm">
+                                <h6 class="fw-bold mb-4"><i class="bi bi-shield-lock me-2 text-warning"></i>Đổi mật khẩu</h6>
+                                <form method="POST" action="<?= BASE_PATH ?>/profile" id="pwdForm">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="change_password">
                                     <div class="mb-3">
@@ -93,13 +90,11 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold small">Mật khẩu mới</label>
-                                        <input type="password" name="new_password" id="newPwd"
-                                               class="form-control rounded-3" required minlength="6">
+                                        <input type="password" name="new_password" id="newPwd" class="form-control rounded-3" required minlength="6">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label fw-semibold small">Xác nhận mật khẩu mới</label>
-                                        <input type="password" name="confirm_password" id="confirmPwd"
-                                               class="form-control rounded-3" required>
+                                        <input type="password" name="confirm_password" id="confirmPwd" class="form-control rounded-3" required>
                                         <small id="pwdMatch" class="d-none text-danger fw-semibold mt-1 d-block">
                                             <i class="bi bi-x-circle me-1"></i>Mật khẩu không khớp
                                         </small>
@@ -112,7 +107,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -141,8 +135,7 @@ document.getElementById('avatarInput').addEventListener('change', function() {
 document.getElementById('confirmPwd').addEventListener('input', function() {
     const match = document.getElementById('pwdMatch');
     (this.value && this.value !== document.getElementById('newPwd').value)
-        ? match.classList.remove('d-none')
-        : match.classList.add('d-none');
+        ? match.classList.remove('d-none') : match.classList.add('d-none');
 });
 document.getElementById('pwdForm').addEventListener('submit', function(e) {
     if (document.getElementById('newPwd').value !== document.getElementById('confirmPwd').value) {

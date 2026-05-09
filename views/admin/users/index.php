@@ -1,6 +1,5 @@
 <?php include __DIR__ . '/../partials/header.php'; ?>
 
-<!-- Page header -->
 <div class="srt-page-header">
     <div>
         <h4><i class="fa-solid fa-users me-2" style="color:var(--accent);"></i>Quản lý Người dùng</h4>
@@ -16,7 +15,6 @@
     </span>
 </div>
 
-<!-- Alerts -->
 <?php if (isset($_GET['success'])): ?>
     <div class="srt-alert srt-alert-success"><i class="fa-solid fa-check-circle me-2"></i>Cập nhật thành công.</div>
 <?php endif; ?>
@@ -30,7 +28,6 @@
     <div class="srt-alert srt-alert-danger"><i class="fa-solid fa-exclamation-circle me-2"></i>Mật khẩu phải có ít nhất 6 ký tự.</div>
 <?php endif; ?>
 
-<!-- Table card -->
 <div class="srt-card">
     <div class="srt-card-header">
         <span><i class="fa-solid fa-list me-2"></i>Danh sách tài khoản</span>
@@ -46,7 +43,7 @@
                     <th>Vai trò</th>
                     <th>Trạng thái</th>
                     <th>Ngày tạo</th>
-                    <th style="width:180px;">Thao tác</th>
+                    <th style="width:150px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,7 +65,8 @@
                         <div class="d-flex align-items-center gap-2">
                             <?php if (!empty($u['avatar'])): ?>
                                 <img src="/<?= htmlspecialchars($u['avatar']) ?>"
-                                     class="rounded-circle" style="width:34px;height:34px;object-fit:cover;border:2px solid #e9ecef;">
+                                     class="rounded-circle"
+                                     style="width:34px;height:34px;object-fit:cover;border:2px solid #e9ecef;flex-shrink:0;">
                             <?php else: ?>
                                 <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
                                      style="width:34px;height:34px;background:var(--accent);color:#fff;font-size:.85rem;flex-shrink:0;">
@@ -78,7 +76,7 @@
                             <span class="fw-semibold" style="font-size:.88rem;">
                                 <?= htmlspecialchars($u['username']) ?>
                                 <?php if ($isSelf): ?>
-                                    <span style="font-size:.72rem;background:#e3f0ff;color:var(--accent);border-radius:10px;padding:1px 7px;font-weight:700;">Bạn</span>
+                                    <span style="font-size:.72rem;background:#e3f0ff;color:var(--accent);border-radius:10px;padding:1px 7px;font-weight:700;margin-left:4px;">Bạn</span>
                                 <?php endif; ?>
                             </span>
                         </div>
@@ -104,26 +102,27 @@
                     <td>
                         <?php if (!$isSelf): ?>
                         <div class="d-flex gap-1 flex-wrap">
-                            <!-- Toggle ban/unban -->
-                            <form method="POST" action="/admin/users/toggle/<?= $u['id'] ?>">
+                            <!-- Ban / Unban -->
+                            <form method="POST" action="/admin/users/toggle/<?= $u['id'] ?>"
+                                  onsubmit="return confirm('<?= $u['status'] == 1 ? 'Khoá' : 'Mở khoá' ?> tài khoản này?')">
+                                <?= csrf_field() ?>
                                 <input type="hidden" name="status" value="<?= $u['status'] == 1 ? 0 : 1 ?>">
                                 <button type="submit"
                                         class="<?= $u['status'] == 1 ? 'btn-srt-danger' : 'btn-srt-primary' ?> btn-srt-sm"
-                                        title="<?= $u['status'] == 1 ? 'Khoá tài khoản' : 'Mở khoá' ?>"
-                                        onclick="return confirm('<?= $u['status'] == 1 ? 'Khoá' : 'Mở khoá' ?> tài khoản này?')">
+                                        title="<?= $u['status'] == 1 ? 'Khoá tài khoản' : 'Mở khoá' ?>">
                                     <i class="fa-solid <?= $u['status'] == 1 ? 'fa-ban' : 'fa-unlock' ?>"></i>
                                 </button>
                             </form>
                             <!-- Reset password -->
-                            <button class="btn-srt-primary btn-srt-sm"
-                                    style="background:#f59e0b;"
-                                    title="Đặt lại mật khẩu"
+                            <button type="button" class="btn-srt-primary btn-srt-sm"
+                                    style="background:#f59e0b;" title="Đặt lại mật khẩu"
                                     onclick="showResetModal(<?= $u['id'] ?>, '<?= addslashes(htmlspecialchars($u['username'])) ?>')">
                                 <i class="fa-solid fa-key"></i>
                             </button>
                             <!-- Delete -->
                             <form method="POST" action="/admin/users/delete/<?= $u['id'] ?>"
                                   onsubmit="return confirm('Xoá vĩnh viễn tài khoản <?= addslashes(htmlspecialchars($u['username'])) ?>?')">
+                                <?= csrf_field() ?>
                                 <button type="submit" class="btn-srt-danger btn-srt-sm">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
@@ -139,7 +138,6 @@
         </table>
         </div>
 
-        <!-- Pagination -->
         <?php if ($pages > 1): ?>
         <div style="padding:16px 20px;">
             <div class="srt-pagination">
@@ -148,7 +146,6 @@
                 <?php else: ?>
                     <span class="disabled"><i class="fa-solid fa-chevron-left"></i></span>
                 <?php endif; ?>
-
                 <?php for ($i = 1; $i <= $pages; $i++): ?>
                     <?php if ($i == $page): ?>
                         <span class="active"><?= $i ?></span>
@@ -158,7 +155,6 @@
                         <span class="disabled">…</span>
                     <?php endif; ?>
                 <?php endfor; ?>
-
                 <?php if ($page < $pages): ?>
                     <a href="/admin/users?page=<?= $page + 1 ?>"><i class="fa-solid fa-chevron-right"></i></a>
                 <?php else: ?>
@@ -175,14 +171,18 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
         <div class="modal-content border-0 shadow-lg rounded-4">
             <form method="POST" id="resetForm" action="">
+                <?= csrf_field() ?>
                 <div class="modal-header border-0 pb-0">
-                    <h6 class="modal-title fw-bold"><i class="fa-solid fa-key me-2" style="color:#f59e0b;"></i>Đặt lại mật khẩu</h6>
+                    <h6 class="modal-title fw-bold">
+                        <i class="fa-solid fa-key me-2" style="color:#f59e0b;"></i>Đặt lại mật khẩu
+                    </h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body pt-3">
                     <p class="text-muted small mb-3">Đặt mật khẩu mới cho: <strong id="resetUsername"></strong></p>
                     <label class="form-label fw-semibold small">Mật khẩu mới <span class="text-danger">*</span></label>
-                    <input type="password" name="new_password" class="form-control rounded-3" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+                    <input type="password" name="new_password" class="form-control rounded-3"
+                           placeholder="Tối thiểu 6 ký tự" required minlength="6">
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Huỷ</button>

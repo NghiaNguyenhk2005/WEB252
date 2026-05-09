@@ -11,7 +11,7 @@
                                 <i class="bi bi-person-plus-fill text-success fs-4"></i>
                             </div>
                             <h4 class="fw-bold mb-1">Tạo tài khoản</h4>
-                            <p class="text-muted small">Tham gia TechSaaS ngay hôm nay</p>
+                            <p class="text-muted small">Tham gia <?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> ngay hôm nay</p>
                         </div>
 
                         <?php if (!empty($error)): ?>
@@ -20,7 +20,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="/register" id="regForm" novalidate>
+                        <form method="POST" action="<?= BASE_PATH ?>/register" id="regForm" novalidate>
                             <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Tên hiển thị</label>
@@ -80,7 +80,7 @@
 
                         <p class="text-center text-muted small mt-4 mb-0">
                             Đã có tài khoản?
-                            <a href="/login" class="text-primary fw-semibold text-decoration-none">Đăng nhập</a>
+                            <a href="<?= BASE_PATH ?>/login" class="text-primary fw-semibold text-decoration-none">Đăng nhập</a>
                         </p>
                     </div>
                 </div>
