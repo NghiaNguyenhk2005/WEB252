@@ -1,15 +1,16 @@
 <?php
 
 spl_autoload_register(function ($class) {
+    $base  = __DIR__ . '/';
     $paths = [
-        "app/core/",
-        "app/models/",
-        "app/controllers/",
-        "app/controllers/admin/",
-        "app/controllers/client/",
+        'app/core/',
+        'app/models/',
+        'app/controllers/',
+        'app/controllers/admin/',
+        'app/controllers/client/',
     ];
     foreach ($paths as $path) {
-        $file = $path . $class . ".php";
+        $file = $base . $path . $class . '.php';
         if (file_exists($file)) {
             require_once $file;
             return;
@@ -18,42 +19,53 @@ spl_autoload_register(function ($class) {
 });
 
 session_start();
+require_once __DIR__ . '/app/core/helpers.php';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Dev mode: set to false on production
+define('DEV_MODE', true);
+if (DEV_MODE) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(0);
+    ini_set('display_errors', 0);
+}
+
+// CSRF token generation
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 // Database connection
 $db   = new Database();
 $conn = $db->getConnection();
 
-// Global settings (used in header/footer on every page)
+// Global settings available to all views
 $settingModel   = new SettingModel($conn);
 $globalSettings = $settingModel->getAllSettings();
 
 // ── Routing ───────────────────────────────────────────────────
-$url = trim($_GET['url'] ?? '', '/');
-
-// Helper: extract segment
+$url      = trim($_GET['url'] ?? '', '/');
 $segments = explode('/', $url);
-$seg0 = $segments[0] ?? '';
-$seg1 = $segments[1] ?? '';
-$seg2 = $segments[2] ?? '';
-$id   = isset($segments[2]) ? (int)$segments[2] : (isset($segments[1]) ? (int)$segments[1] : 0);
+$seg0     = $segments[0] ?? '';
+$seg1     = $segments[1] ?? '';
+$seg2     = $segments[2] ?? '';
+$id       = (int)($segments[3] ?? $segments[2] ?? 0);
 
 switch (true) {
 
-    // ── HOME ──────────────────────────────────────────────────
     case $url === '':
     case $url === 'home':
-        require_once "views/client/home.php";
+        (new HomeController($conn))->index();
         break;
 
-    // ── AUTH ──────────────────────────────────────────────────
     case $url === 'login':
+        if (isset($_SESSION['user'])) { header('Location: /'); exit; }
         (new AuthController($conn))->login();
         break;
 
     case $url === 'register':
+        if (isset($_SESSION['user'])) { header('Location: /'); exit; }
         (new AuthController($conn))->register();
         break;
 
@@ -65,7 +77,6 @@ switch (true) {
         (new AuthController($conn))->profile();
         break;
 
-    // ── CONTACT ───────────────────────────────────────────────
     case $url === 'contact':
         (new ContactController($conn))->index();
         break;
@@ -74,7 +85,6 @@ switch (true) {
         (new ContactController($conn))->submit();
         break;
 
-    // ── ADMIN: CONTACTS ───────────────────────────────────────
     case $url === 'admin/contacts':
         (new AdminContactController($conn))->index();
         break;
@@ -87,7 +97,6 @@ switch (true) {
         (new AdminContactController($conn))->delete($id);
         break;
 
-    // ── ADMIN: SETTINGS & SLIDERS ────────────────────────────
     case $url === 'admin/settings':
         (new AdminSettingController($conn))->index();
         break;
@@ -101,15 +110,14 @@ switch (true) {
         break;
 
     case $seg0 === 'admin' && $seg1 === 'settings' && $seg2 === 'slider' && isset($segments[3]):
-        $sliderId = (int)($segments[3] ?? 0);
-        $action   = $segments[4] ?? '';
-        $ctrl     = new AdminSettingController($conn);
-        if ($action === 'delete') $ctrl->sliderDelete($sliderId);
-        elseif ($action === 'toggle') $ctrl->sliderToggle($sliderId);
-        else require_once "views/client/home.php";
+        $sliderId     = (int)$segments[3];
+        $sliderAction = $segments[4] ?? '';
+        $ctrl         = new AdminSettingController($conn);
+        if ($sliderAction === 'delete')       $ctrl->sliderDelete($sliderId);
+        elseif ($sliderAction === 'toggle')   $ctrl->sliderToggle($sliderId);
+        else { http_response_code(404); (new HomeController($conn))->index(); }
         break;
 
-    // ── ADMIN: USERS ──────────────────────────────────────────
     case $url === 'admin/users':
         (new AdminUserController($conn))->index();
         break;
@@ -126,9 +134,8 @@ switch (true) {
         (new AdminUserController($conn))->delete($id);
         break;
 
-    // ── 404 ───────────────────────────────────────────────────
     default:
         http_response_code(404);
-        require_once "views/client/home.php";
+        (new HomeController($conn))->index();
         break;
 }

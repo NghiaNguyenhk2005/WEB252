@@ -28,23 +28,25 @@
                         <?php endif; ?>
 
                         <form method="POST" action="/login" novalidate>
+                            <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Email</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
                                     <input type="email" name="email" class="form-control border-start-0 ps-0"
                                            placeholder="you@example.com"
-                                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-                                           required>
+                                           value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                                 </div>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label fw-semibold small">Mật khẩu</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                                    <input type="password" name="password" id="loginPwd" class="form-control border-start-0 ps-0 border-end-0"
+                                    <input type="password" name="password" id="loginPwd"
+                                           class="form-control border-start-0 ps-0 border-end-0"
                                            placeholder="••••••••" required>
-                                    <span class="input-group-text bg-light cursor-pointer" style="cursor:pointer;" onclick="togglePwd('loginPwd',this)">
+                                    <span class="input-group-text bg-light" style="cursor:pointer;"
+                                          onclick="togglePwd('loginPwd',this)">
                                         <i class="bi bi-eye text-muted"></i>
                                     </span>
                                 </div>
@@ -55,7 +57,8 @@
                         </form>
 
                         <p class="text-center text-muted small mt-4 mb-0">
-                            Chưa có tài khoản? <a href="/register" class="text-primary fw-semibold text-decoration-none">Đăng ký ngay</a>
+                            Chưa có tài khoản?
+                            <a href="/register" class="text-primary fw-semibold text-decoration-none">Đăng ký ngay</a>
                         </p>
                     </div>
                 </div>
@@ -69,15 +72,9 @@
 function togglePwd(id, btn) {
     const input = document.getElementById(id);
     const icon  = btn.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.className = 'bi bi-eye-slash text-muted';
-    } else {
-        input.type = 'password';
-        icon.className = 'bi bi-eye text-muted';
-    }
+    input.type  = input.type === 'password' ? 'text' : 'password';
+    icon.className = input.type === 'password' ? 'bi bi-eye text-muted' : 'bi bi-eye-slash text-muted';
 }
-// Client-side validation
 document.querySelector('form').addEventListener('submit', function(e) {
     const email = this.querySelector('[name=email]').value.trim();
     const pwd   = this.querySelector('[name=password]').value;

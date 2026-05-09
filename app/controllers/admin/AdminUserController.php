@@ -1,33 +1,33 @@
 <?php
 class AdminUserController extends BaseController {
     private $userModel;
-    private $userRoleModel;
     private const PER_PAGE = 15;
 
     public function __construct($conn) {
         AuthMiddleware::admin();
-        $this->userModel     = new UserModel($conn);
-        $this->userRoleModel = new UserRoleModel($conn);
+        $this->userModel = new UserModel($conn);
     }
 
     public function index() {
-        $page     = max(1, (int)($_GET['page'] ?? 1));
-        $offset   = ($page - 1) * self::PER_PAGE;
-        $total    = $this->userModel->countAll();
-        $pages    = (int)ceil($total / self::PER_PAGE);
-        $users    = $this->userModel->getAllWithRoles(self::PER_PAGE, $offset);
+        global $globalSettings;
+        $page   = max(1, (int)($_GET['page'] ?? 1));
+        $offset = ($page - 1) * self::PER_PAGE;
+        $total  = $this->userModel->countAll();
+        $pages  = (int)ceil($total / self::PER_PAGE);
+        $users  = $this->userModel->getAllWithRoles(self::PER_PAGE, $offset);
 
         $this->view('admin/users/index', [
-            'users'  => $users,
-            'page'   => $page,
-            'pages'  => $pages,
-            'total'  => $total,
+            'globalSettings' => $globalSettings,
+            'users'          => $users,
+            'page'           => $page,
+            'pages'          => $pages,
+            'total'          => $total,
         ]);
     }
 
     public function toggleStatus($id) {
-        AuthMiddleware::admin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
             $status = (int)($_POST['status'] ?? 1);
             $this->userModel->setStatus((int)$id, $status);
         }
@@ -35,8 +35,8 @@ class AdminUserController extends BaseController {
     }
 
     public function resetPassword($id) {
-        AuthMiddleware::admin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
             $newPass = $_POST['new_password'] ?? '';
             if (strlen($newPass) >= 6) {
                 $this->userModel->resetPassword((int)$id, $newPass);
@@ -49,7 +49,9 @@ class AdminUserController extends BaseController {
     }
 
     public function delete($id) {
-        AuthMiddleware::admin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
+        }
         $this->userModel->delete((int)$id);
         $this->redirect('/admin/users?deleted=1');
     }

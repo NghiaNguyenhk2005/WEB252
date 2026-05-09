@@ -4,7 +4,6 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">
-
                 <div class="card border-0 shadow-lg rounded-4 p-2">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
@@ -22,6 +21,7 @@
                         <?php endif; ?>
 
                         <form method="POST" action="/register" id="regForm" novalidate>
+                            <?= csrf_field() ?>
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Tên hiển thị</label>
                                 <div class="input-group">
@@ -46,13 +46,14 @@
                                 <label class="form-label fw-semibold small">Mật khẩu</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
-                                    <input type="password" name="password" id="regPwd" class="form-control border-start-0 ps-0 border-end-0"
+                                    <input type="password" name="password" id="regPwd"
+                                           class="form-control border-start-0 ps-0 border-end-0"
                                            placeholder="Tối thiểu 6 ký tự" required minlength="6">
-                                    <span class="input-group-text bg-light" style="cursor:pointer;" onclick="togglePwd('regPwd',this)">
+                                    <span class="input-group-text bg-light" style="cursor:pointer;"
+                                          onclick="togglePwd('regPwd',this)">
                                         <i class="bi bi-eye text-muted"></i>
                                     </span>
                                 </div>
-                                <!-- Password strength bar -->
                                 <div class="mt-2" id="strengthBar" style="display:none;">
                                     <div class="progress" style="height:4px;border-radius:4px;">
                                         <div class="progress-bar" id="strengthFill" style="width:0%;transition:width .3s;"></div>
@@ -64,10 +65,13 @@
                                 <label class="form-label fw-semibold small">Xác nhận mật khẩu</label>
                                 <div class="input-group">
                                     <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock-fill text-muted"></i></span>
-                                    <input type="password" name="confirm_password" id="confirmPwd" class="form-control border-start-0 ps-0"
+                                    <input type="password" name="confirm_password" id="confirmPwd"
+                                           class="form-control border-start-0 ps-0"
                                            placeholder="Nhập lại mật khẩu" required>
                                 </div>
-                                <small id="pwdMatch" class="d-none text-danger fw-semibold"><i class="bi bi-x-circle me-1"></i>Mật khẩu không khớp</small>
+                                <small id="pwdMatch" class="d-none text-danger fw-semibold">
+                                    <i class="bi bi-x-circle me-1"></i>Mật khẩu không khớp
+                                </small>
                             </div>
                             <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2 fw-bold">
                                 Tạo tài khoản
@@ -75,11 +79,11 @@
                         </form>
 
                         <p class="text-center text-muted small mt-4 mb-0">
-                            Đã có tài khoản? <a href="/login" class="text-primary fw-semibold text-decoration-none">Đăng nhập</a>
+                            Đã có tài khoản?
+                            <a href="/login" class="text-primary fw-semibold text-decoration-none">Đăng nhập</a>
                         </p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -92,8 +96,6 @@ function togglePwd(id, btn) {
     input.type  = input.type === 'password' ? 'text' : 'password';
     icon.className = input.type === 'password' ? 'bi bi-eye text-muted' : 'bi bi-eye-slash text-muted';
 }
-
-// Password strength
 document.getElementById('regPwd').addEventListener('input', function() {
     const v = this.value;
     const bar = document.getElementById('strengthBar');
@@ -108,33 +110,25 @@ document.getElementById('regPwd').addEventListener('input', function() {
     if (/[0-9]/.test(v)) score++;
     if (/[^A-Za-z0-9]/.test(v)) score++;
     const levels = [
-        {w:'20%', cls:'bg-danger',   txt:'Rất yếu'},
-        {w:'40%', cls:'bg-warning',  txt:'Yếu'},
-        {w:'60%', cls:'bg-info',     txt:'Trung bình'},
-        {w:'80%', cls:'bg-primary',  txt:'Mạnh'},
-        {w:'100%',cls:'bg-success',  txt:'Rất mạnh'},
+        {w:'20%',cls:'bg-danger',  txt:'Rất yếu'},
+        {w:'40%',cls:'bg-warning', txt:'Yếu'},
+        {w:'60%',cls:'bg-info',    txt:'Trung bình'},
+        {w:'80%',cls:'bg-primary', txt:'Mạnh'},
+        {w:'100%',cls:'bg-success',txt:'Rất mạnh'},
     ];
     const l = levels[Math.min(score - 1, 4)] || levels[0];
     fill.style.width = l.w;
     fill.className   = 'progress-bar ' + l.cls;
     label.textContent = l.txt;
 });
-
-// Confirm password match
 document.getElementById('confirmPwd').addEventListener('input', function() {
     const match = document.getElementById('pwdMatch');
-    if (this.value && this.value !== document.getElementById('regPwd').value) {
-        match.classList.remove('d-none');
-    } else {
-        match.classList.add('d-none');
-    }
+    (this.value && this.value !== document.getElementById('regPwd').value)
+        ? match.classList.remove('d-none')
+        : match.classList.add('d-none');
 });
-
-// Form submit validation
 document.getElementById('regForm').addEventListener('submit', function(e) {
-    const pwd     = document.getElementById('regPwd').value;
-    const confirm = document.getElementById('confirmPwd').value;
-    if (pwd !== confirm) {
+    if (document.getElementById('regPwd').value !== document.getElementById('confirmPwd').value) {
         e.preventDefault();
         document.getElementById('pwdMatch').classList.remove('d-none');
     }

@@ -27,20 +27,20 @@
                 <?php endif; ?>
 
                 <div class="row g-4">
-                    <!-- ── Update Info ── -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-body p-4">
-                                <h6 class="fw-bold mb-4"><i class="bi bi-pencil-square me-2 text-primary"></i>Cập nhật thông tin</h6>
-
+                                <h6 class="fw-bold mb-4">
+                                    <i class="bi bi-pencil-square me-2 text-primary"></i>Cập nhật thông tin
+                                </h6>
                                 <form method="POST" action="/profile" enctype="multipart/form-data">
+                                    <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="update_info">
-
-                                    <!-- Avatar preview -->
                                     <div class="text-center mb-4">
                                         <div class="position-relative d-inline-block">
                                             <?php if (!empty($user['avatar'])): ?>
-                                                <img src="/<?= htmlspecialchars($user['avatar']) ?>" id="avatarPreview"
+                                                <img src="/<?= htmlspecialchars($user['avatar']) ?>"
+                                                     id="avatarPreview"
                                                      class="rounded-circle border border-3 border-primary"
                                                      style="width:90px;height:90px;object-fit:cover;">
                                             <?php else: ?>
@@ -50,14 +50,15 @@
                                                     <?= strtoupper(substr($user['username'], 0, 1)) ?>
                                                 </div>
                                             <?php endif; ?>
-                                            <label for="avatarInput" class="position-absolute bottom-0 end-0 bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:28px;height:28px;cursor:pointer;">
+                                            <label for="avatarInput"
+                                                   class="position-absolute bottom-0 end-0 bg-primary rounded-circle d-flex align-items-center justify-content-center"
+                                                   style="width:28px;height:28px;cursor:pointer;">
                                                 <i class="bi bi-camera-fill text-white" style="font-size:.7rem;"></i>
                                             </label>
                                         </div>
                                         <input type="file" id="avatarInput" name="avatar" class="d-none" accept="image/*">
                                         <p class="text-muted small mt-2 mb-0">Nhấn vào biểu tượng máy ảnh để đổi ảnh</p>
                                     </div>
-
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold small">Tên hiển thị</label>
                                         <input type="text" name="username" class="form-control rounded-3"
@@ -77,12 +78,14 @@
                         </div>
                     </div>
 
-                    <!-- ── Change Password ── -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-4 h-100">
                             <div class="card-body p-4">
-                                <h6 class="fw-bold mb-4"><i class="bi bi-shield-lock me-2 text-warning"></i>Đổi mật khẩu</h6>
+                                <h6 class="fw-bold mb-4">
+                                    <i class="bi bi-shield-lock me-2 text-warning"></i>Đổi mật khẩu
+                                </h6>
                                 <form method="POST" action="/profile" id="pwdForm">
+                                    <?= csrf_field() ?>
                                     <input type="hidden" name="action" value="change_password">
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold small">Mật khẩu hiện tại</label>
@@ -90,11 +93,13 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label fw-semibold small">Mật khẩu mới</label>
-                                        <input type="password" name="new_password" id="newPwd" class="form-control rounded-3" required minlength="6">
+                                        <input type="password" name="new_password" id="newPwd"
+                                               class="form-control rounded-3" required minlength="6">
                                     </div>
                                     <div class="mb-4">
                                         <label class="form-label fw-semibold small">Xác nhận mật khẩu mới</label>
-                                        <input type="password" name="confirm_password" id="confirmPwd" class="form-control rounded-3" required>
+                                        <input type="password" name="confirm_password" id="confirmPwd"
+                                               class="form-control rounded-3" required>
                                         <small id="pwdMatch" class="d-none text-danger fw-semibold mt-1 d-block">
                                             <i class="bi bi-x-circle me-1"></i>Mật khẩu không khớp
                                         </small>
@@ -114,7 +119,6 @@
 </section>
 
 <script>
-// Avatar preview
 document.getElementById('avatarInput').addEventListener('change', function() {
     const file = this.files[0];
     if (!file) return;
@@ -128,23 +132,18 @@ document.getElementById('avatarInput').addEventListener('change', function() {
             img.id = 'avatarPreview';
             img.src = e.target.result;
             img.className = 'rounded-circle border border-3 border-primary';
-            img.style = 'width:90px;height:90px;object-fit:cover;';
+            img.style.cssText = 'width:90px;height:90px;object-fit:cover;';
             prev.replaceWith(img);
         }
     };
     reader.readAsDataURL(file);
 });
-
-// Password match check
 document.getElementById('confirmPwd').addEventListener('input', function() {
     const match = document.getElementById('pwdMatch');
-    if (this.value && this.value !== document.getElementById('newPwd').value) {
-        match.classList.remove('d-none');
-    } else {
-        match.classList.add('d-none');
-    }
+    (this.value && this.value !== document.getElementById('newPwd').value)
+        ? match.classList.remove('d-none')
+        : match.classList.add('d-none');
 });
-
 document.getElementById('pwdForm').addEventListener('submit', function(e) {
     if (document.getElementById('newPwd').value !== document.getElementById('confirmPwd').value) {
         e.preventDefault();
