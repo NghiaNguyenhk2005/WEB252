@@ -29,6 +29,10 @@ class AuthModel extends BaseModel {
     /**
      * Tạo tài khoản mới và gán vai trò mặc định (Member)
      */
+    public function findById($id) {
+        return $this->where("id", $id)->first();
+    }
+
     public function createUser($data) {
         $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         $userId = $this->create($data);

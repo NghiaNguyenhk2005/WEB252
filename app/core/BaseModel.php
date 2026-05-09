@@ -13,42 +13,51 @@ class BaseModel {
     protected $wheres = [];
     protected $bindings = [];
     protected $orderBy = "";
-    protected $limit = "";
-    protected $offset = "";
+    protected $limitVal = "";
+    protected $offsetVal = "";
 
     public function __construct($conn, $table) {
-        $this->conn = $conn;
+        $this->conn  = $conn;
         $this->table = $table;
     }
 
     /**
      * Xử lý kiểu dữ liệu cho bind_param
      */
+    /** Expose raw connection for controllers that need custom queries */
+    public function getConn() {
+        return $this->conn;
+    }
+
+    // ======================
+    // TYPE HANDLING
+    // ======================
     private function getType($value) {
-        if (is_int($value)) return "i";
+        if (is_int($value))   return "i";
         if (is_float($value)) return "d";
         return "s";
     }
 
     private function buildTypes($values) {
         $types = "";
-        foreach ($values as $v) {
-            $types .= $this->getType($v);
-        }
+        foreach ($values as $v) { $types .= $this->getType($v); }
         return $types;
     }
 
     /**
      * Các phương thức xây dựng câu lệnh SQL
      */
+    // ======================
+    // QUERY BUILDER
+    // ======================
     public function select($fields = "*") {
         $this->select = $fields;
         return $this;
     }
 
     public function where($column, $value) {
-        $this->wheres[] = "$column = ?";
-        $this->bindings[] = $value;
+        $this->wheres[]    = "$column = ?";
+        $this->bindings[]  = $value;
         return $this;
     }
 
@@ -63,8 +72,8 @@ class BaseModel {
     }
 
     public function limit($limit, $offset = 0) {
-        $this->limit = "LIMIT $limit";
-        $this->offset = "OFFSET $offset";
+        $this->limitVal  = "LIMIT $limit";
+        $this->offsetVal = "OFFSET $offset";
         return $this;
     }
 
@@ -98,13 +107,23 @@ class BaseModel {
         $result = $stmt->get_result();
         $row = $result ? $result->fetch_assoc() : null;
         return $row ? $row['total'] : 0;
+    // ======================
+    // BUILD & EXECUTE
+    // ======================
+    private function buildQuery() {
+        $sql = "SELECT {$this->select} FROM {$this->table}";
+        if (!empty($this->joins))  $sql .= " " . implode(" ", $this->joins);
+        if (!empty($this->wheres)) $sql .= " WHERE " . implode(" AND ", $this->wheres);
+        if ($this->orderBy)        $sql .= " " . $this->orderBy;
+        if ($this->limitVal)       $sql .= " " . $this->limitVal . " " . $this->offsetVal;
+        return $sql;
     }
 
     /**
      * Lấy danh sách kết quả
      */
     public function get() {
-        $sql = $this->buildQuery();
+        $sql  = $this->buildQuery();
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
             $this->reset();
@@ -119,6 +138,7 @@ class BaseModel {
         $stmt->execute();
         $result = $stmt->get_result();
         $this->reset(); // Làm mới trạng thái sau khi truy vấn
+        $this->reset();
         return $result;
     }
 
@@ -134,8 +154,11 @@ class BaseModel {
     /**
      * Các tác vụ CRUD cơ bản (Thêm, Sửa, Xóa)
      */
+    // ======================
+    // CRUD
+    // ======================
     public function create($data) {
-        $columns = implode(",", array_keys($data));
+        $columns      = implode(",", array_keys($data));
         $placeholders = implode(",", array_fill(0, count($data), "?"));
 
         $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
@@ -149,6 +172,12 @@ class BaseModel {
             return $this->conn->insert_id;
         }
         return false;
+        $sql          = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+        $stmt         = $this->conn->prepare($sql);
+        $types        = $this->buildTypes($data);
+        $values       = array_values($data);
+        $stmt->bind_param($types, ...$values);
+        return $stmt->execute();
     }
 
     public function update($id, $data) {
@@ -157,9 +186,11 @@ class BaseModel {
         $stmt = $this->conn->prepare($sql);
 
         $types = $this->buildTypes($data) . "i";
+        $sql    = "UPDATE {$this->table} SET $fields WHERE id = ?";
+        $stmt   = $this->conn->prepare($sql);
+        $types  = $this->buildTypes($data) . "i";
         $values = array_values($data);
         $values[] = $id;
-
         $stmt->bind_param($types, ...$values);
         return $stmt->execute();
     }
@@ -170,16 +201,25 @@ class BaseModel {
         return $stmt->execute();
     }
 
+    public function softDelete($id) {
+        $stmt = $this->conn->prepare("UPDATE {$this->table} SET deleted_at = NOW() WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
     /**
      * Đặt lại trạng thái bộ dựng truy vấn
      */
+    // ======================
+    // RESET QUERY STATE
+    // ======================
     private function reset() {
-        $this->select = "*";
-        $this->joins = [];
-        $this->wheres = [];
-        $this->bindings = [];
-        $this->orderBy = "";
-        $this->limit = "";
-        $this->offset = "";
+        $this->select    = "*";
+        $this->joins     = [];
+        $this->wheres    = [];
+        $this->bindings  = [];
+        $this->orderBy   = "";
+        $this->limitVal  = "";
+        $this->offsetVal = "";
     }
 }

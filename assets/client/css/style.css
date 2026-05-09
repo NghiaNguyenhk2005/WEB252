@@ -9,6 +9,11 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     border-bottom: 1px solid rgba(255,255,255,0.3); 
     z-index: 2000 !important; 
     top: 0 !important; /* Always at very top */
+.glass-nav {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
 }
 
 /* --- STICKY SIDEBARS (CART/CHECKOUT) --- */
@@ -27,61 +32,109 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 .item-row:hover img { transform: scale(1.05); }
 
 /* --- BUTTONS & TEXT EFFECTS --- */
-.text-gradient { 
-    background: linear-gradient(135deg, #0d6efd, #6610f2); 
-    -webkit-background-clip: text; 
+.text-gradient {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
     background-clip: text;
-    -webkit-text-fill-color: transparent; 
+    -webkit-text-fill-color: transparent;
 }
-.btn-gradient { 
-    background: linear-gradient(135deg, #0d6efd, #6610f2); 
-    color: white; border: none; transition: all 0.3s ease; 
+.btn-gradient {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    color: white; border: none; transition: all 0.3s ease;
 }
-.btn-gradient:hover { 
-    transform: translateY(-2px); 
-    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4); 
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.4);
     color: white;
 }
 
 /* --- CARDS & BLOCKS --- */
-.hover-lift { 
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
-    border-radius: 16px; 
-    border: 1px solid rgba(0,0,0,0.03); 
-    background: #fff; 
+.hover-lift {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.03);
+    background: #fff;
     overflow: hidden;
     box-shadow: 0 4px 6px rgba(0,0,0,0.04);
 }
-.hover-lift:hover { 
-    transform: translateY(-12px); 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+.hover-lift:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
 }
-.icon-box { 
-    width: 50px; height: 50px; 
-    background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(102,16,242,0.1)); 
-    color: #0d6efd; border-radius: 12px; 
-    display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin-bottom: 1rem; 
+.icon-box {
+    width: 50px; height: 50px;
+    background: linear-gradient(135deg, rgba(13,110,253,0.1), rgba(102,16,242,0.1));
+    color: #0d6efd; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: bold; margin-bottom: 1rem;
 }
 
 /* --- HERO CAROUSEL --- */
-.carousel-item { height: 85vh; background-color: #1a1e21; position: relative; }
-.carousel-image-bg {
-    width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0.6;
+.carousel-item {
+    height: 85vh;
+    background-color: #1a1e21;
+    position: relative;
+    overflow: hidden;
 }
-.carousel-caption { bottom: 35%; z-index: 2; text-align: left; }
+.carousel-image-bg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.55;
+}
+/* Ensure caption sits above the image */
+.carousel-item .container {
+    position: relative;
+    z-index: 2;
+    height: 85vh;
+    display: flex;
+    align-items: center;
+}
+.carousel-caption {
+    position: static;
+    text-align: left;
+    padding: 0;
+}
 
 /* --- SOCIAL PROOF (ĐỐI TÁC) --- */
-.partner-logo { opacity: 0.5; filter: grayscale(100%); transition: all 0.3s ease; height: 40px; }
-.partner-logo:hover { opacity: 1; filter: grayscale(0%); cursor: pointer; }
+.partner-logo {
+    opacity: 0.45; filter: grayscale(100%);
+    transition: all 0.3s ease; height: 36px;
+}
+.partner-logo:hover { opacity: 1; filter: grayscale(0%); }
 
 /* --- PRICING (BẢNG GIÁ) --- */
-.pricing-card { border: 1px solid #e9ecef; border-radius: 16px; transition: all 0.3s ease; }
-.pricing-card:hover { border-color: #0d6efd; box-shadow: 0 15px 30px rgba(13,110,253,0.1); transform: translateY(-10px); }
-.pricing-card.popular { border: 2px solid #0d6efd; box-shadow: 0 10px 20px rgba(13,110,253,0.1); position: relative; }
-.popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0d6efd; color: white; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.pricing-card {
+    border: 1px solid #e9ecef; border-radius: 16px;
+    transition: all 0.3s ease;
+}
+.pricing-card:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 15px 30px rgba(13,110,253,0.1);
+    transform: translateY(-10px);
+}
+.pricing-card.popular {
+    border: 2px solid #0d6efd;
+    box-shadow: 0 10px 20px rgba(13,110,253,0.1);
+    position: relative;
+}
+.popular-badge {
+    position: absolute; top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: #0d6efd; color: white;
+    padding: 4px 16px; border-radius: 20px;
+    font-size: 12px; font-weight: bold;
+    white-space: nowrap;
+}
 
 /* --- CTA SECTION --- */
-.cta-section { background: linear-gradient(135deg, #0d6efd, #6610f2); border-radius: 24px; padding: 60px 40px; color: white; text-align: center; }
+.cta-section {
+    background: linear-gradient(135deg, #0d6efd, #6610f2);
+    border-radius: 24px; padding: 60px 40px;
+    color: white; text-align: center;
+}
 
 /* --- FOOTER EFFECTS --- */
 .hover-white:hover { color: #fff !important; }
@@ -97,3 +150,8 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
 /* --- FIX STICKY OVERLAP --- */
 .glass-nav.sticky-top { z-index: 2000 !important; }
 .sticky-top-mobile-off { z-index: 1000 !important; }
+/* --- CUSTOM SCROLLBAR --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }

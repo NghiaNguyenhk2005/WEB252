@@ -13,8 +13,10 @@ class AuthMiddleware {
             session_start();
         }
 
+    public static function check() {
         if (!isset($_SESSION['user'])) {
             header("Location: index.php?url=login");
+            header('Location: ' . BASE_PATH . '/login');
             exit;
         }
     }
@@ -29,6 +31,13 @@ class AuthMiddleware {
 
         if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
             echo "403 Forbidden - Bạn không có quyền truy cập trang này.";
+        if (!isset($_SESSION['user'])) {
+            header('Location: ' . BASE_PATH . '/login');
+            exit;
+        }
+        $role = $_SESSION['user']['role'] ?? '';
+        if ($role !== 'admin') {
+            header('Location: ' . BASE_PATH . '/');
             exit;
         }
     }
