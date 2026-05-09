@@ -1,35 +1,44 @@
 <?php require_once 'views/client/components/header.php'; ?>
 
-<!-- 1. HERO CAROUSEL -->
-<header id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+<!-- 1. HERO CAROUSEL (DYNAMIC FROM SLIDERS) -->
+<header id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-touch="true">
     <div class="carousel-indicators">
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <?php if ($sliders && $sliders->num_rows > 0): ?>
+            <?php for($i=0; $i<$sliders->num_rows; $i++): ?>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>" class="<?= $i === 0 ? 'active' : '' ?>"></button>
+            <?php endfor; ?>
+        <?php endif; ?>
     </div>
     <div class="carousel-inner">
-        <!-- Slide 1 -->
-        <div class="carousel-item active">
-            <img src="assets/client/img/bg1.jpg" class="carousel-image-bg" alt="Hero 1">
-            <div class="container">
-                <div class="carousel-caption col-lg-7 col-md-9">
-                    <span class="badge bg-primary bg-opacity-25 text-white mb-3 py-2 px-3 rounded-pill border border-primary">Hệ thống phân tán 2.0</span>
-                    <h1 class="display-3 fw-bold text-white mb-4">Vận hành doanh nghiệp bằng <span class="text-gradient">Dữ liệu lớn</span></h1>
-                    <p class="lead text-light mb-5 opacity-75">Tích hợp AI và Machine Learning để tối ưu hoá chuỗi cung ứng và quản lý nhân sự theo thời gian thực.</p>
-                    <a href="#" class="btn btn-gradient btn-lg px-5 rounded-pill">Khám phá</a>
+        <?php if ($sliders && $sliders->num_rows > 0): ?>
+            <?php $i=0; while($slider = $sliders->fetch_assoc()): ?>
+                <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
+                    <img src="<?= $slider['image_url'] ?>" class="carousel-image-bg" alt="<?= $slider['title'] ?>">
+                    <div class="container">
+                        <div class="carousel-caption col-lg-7 col-md-9 text-start">
+                            <?php if ($slider['subtitle']): ?>
+                                <span class="badge bg-primary bg-opacity-25 text-white mb-3 py-2 px-3 rounded-pill border border-primary animate__animated animate__fadeInDown"><?= htmlspecialchars($slider['subtitle']) ?></span>
+                            <?php endif; ?>
+                            <h1 class="display-3 fw-bold text-white mb-4 animate__animated animate__fadeInLeft"><?= htmlspecialchars($slider['title']) ?></h1>
+                            <div class="animate__animated animate__fadeInUp animate__delay-1s">
+                                <a href="<?= $slider['button_link'] ?? '#' ?>" class="btn btn-gradient btn-lg px-5 rounded-pill shadow-lg"><?= $slider['button_text'] ?? 'Khám phá' ?></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php $i++; endwhile; ?>
+        <?php else: ?>
+            <!-- Fallback Slide if no sliders in DB -->
+            <div class="carousel-item active">
+                <img src="assets/client/img/bg1.jpg" class="carousel-image-bg" alt="Default Hero">
+                <div class="container">
+                    <div class="carousel-caption col-lg-7 col-md-9 text-start">
+                        <h1 class="display-3 fw-bold text-white mb-4 animate__animated animate__fadeInLeft">Chào mừng đến với TechSaaS</h1>
+                        <a href="index.php?url=products" class="btn btn-gradient btn-lg px-5 rounded-pill animate__animated animate__fadeInUp animate__delay-1s">Bắt đầu ngay</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- Slide 2 -->
-        <div class="carousel-item">
-            <img src="assets/client/img/bg2.jpg" class="carousel-image-bg" alt="Hero 2">
-            <div class="container">
-                <div class="carousel-caption col-lg-7 col-md-9">
-                    <h1 class="display-3 fw-bold text-white mb-4">Bảo mật ở <br> cấp độ quân sự</h1>
-                    <p class="lead text-light mb-5 opacity-75">Mã hoá End-to-End với kiến trúc Zero Trust, đảm bảo dữ liệu luôn được an toàn.</p>
-                    <a href="#" class="btn btn-light text-primary btn-lg px-5 rounded-pill">Xem chứng chỉ</a>
-                </div>
-            </div>
-        </div>
+        <?php endif; ?>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
     <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
@@ -40,11 +49,11 @@
     <div class="container text-center">
         <p class="text-muted small fw-bold mb-4 text-uppercase tracking-wide" data-aos="fade-up">Được tin dùng bởi 500+ doanh nghiệp</p>
         <div class="row justify-content-center align-items-center opacity-75" data-aos="fade-up" data-aos-delay="100">
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" class="partner-logo" alt="Google"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" class="partner-logo" alt="Microsoft"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" class="partner-logo" alt="Amazon"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg" class="partner-logo" alt="Cisco"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" class="partner-logo" alt="IBM"></div>
+            <div class="col-4 col-md-2 mb-3"><h4 class="fw-bold mb-0">GOOGLE</h4></div>
+            <div class="col-4 col-md-2 mb-3"><h4 class="fw-bold mb-0">MICROSOFT</h4></div>
+            <div class="col-4 col-md-2 mb-3"><h4 class="fw-bold mb-0">AMAZON</h4></div>
+            <div class="col-4 col-md-2 mb-3"><h4 class="fw-bold mb-0">CISCO</h4></div>
+            <div class="col-4 col-md-2 mb-3"><h4 class="fw-bold mb-0">IBM</h4></div>
         </div>
     </div>
 </section>
@@ -62,15 +71,15 @@
                     <li><i class="bi bi-check-circle-fill text-primary me-2"></i>Uptime đảm bảo 99.99%</li>
                 </ul>
             </div>
-            <div class="col-lg-6 offset-lg-1 mt-4 mt-lg-0" data-aos="fade-left">
-                <img src="assets/client/img/dashboard.jpg" class="img-fluid rounded-4 shadow-sm" alt="Dashboard">
+            <div class="col-lg-7 mt-4 mt-lg-0" data-aos="fade-left">
+                <img src="assets/client/img/dashboard.jpg" class="img-fluid rounded-4 shadow-sm w-100" alt="Dashboard" style="max-height: 500px; object-fit: cover;">
             </div>
         </div>
         <div class="row align-items-center mt-5 pt-4">
-            <div class="col-lg-6 mt-4 mt-lg-0 order-2 order-lg-1" data-aos="fade-right">
-                <img src="assets/client/img/mobile-app.jpg" class="img-fluid rounded-4 shadow-sm" alt="Mobile App">
+            <div class="col-lg-7 mt-4 mt-lg-0 order-2 order-lg-1" data-aos="fade-right">
+                <img src="assets/client/img/mobile-app.jpg" class="img-fluid rounded-4 shadow-sm w-100" alt="Mobile App" style="max-height: 500px; object-fit: cover;">
             </div>
-            <div class="col-lg-5 offset-lg-1 order-1 order-lg-2" data-aos="fade-left">
+            <div class="col-lg-5 offset-lg-0 order-1 order-lg-2 ps-lg-5" data-aos="fade-left">
                 <h2 class="fw-bold mb-4">Quản trị di động</h2>
                 <p class="text-muted lead">Không giới hạn không gian làm việc. Ứng dụng di động được tối ưu bằng framework Native mang lại trải nghiệm mượt mà không độ trễ.</p>
                 <a href="#" class="btn btn-outline-primary rounded-pill px-4 mt-3">Tải ứng dụng</a>
@@ -131,6 +140,31 @@
     </div>
 </section>
 
+<!-- 5.1 SECTION SẢN PHẨM MỚI NHẤT -->
+<section class="py-5 bg-white">
+    <div class="container my-5">
+        <div class="text-center mb-5 pb-3" data-aos="fade-up">
+            <h2 class="fw-bold display-6">Sản phẩm nổi bật</h2>
+        </div>
+        <div class="row g-4">
+            <?php if ($latestProducts && $latestProducts->num_rows > 0): ?>
+                <?php while($product = $latestProducts->fetch_assoc()): ?>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up">
+                        <div class="card product-card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+                            <img src="<?= $product['image'] ?? 'assets/client/img/dashboard.jpg' ?>" class="card-img-top" alt="<?= $product['name'] ?>" style="height: 180px; object-fit: cover;">
+                            <div class="card-body p-4 text-center">
+                                <h6 class="card-title fw-bold mb-2"><?= $product['name'] ?></h6>
+                                <p class="text-primary fw-bold mb-3 small"><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</p>
+                                <a href="index.php?url=product/<?= $product['slug'] ?>" class="btn btn-outline-dark btn-sm rounded-pill px-4">Chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
 <!-- 6. SECTION BẢNG GIÁ -->
 <section class="py-5 bg-white">
     <div class="container my-5">
@@ -170,6 +204,31 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5.2 SECTION TIN TỨC MỚI NHẤT -->
+<section class="py-5 bg-light">
+    <div class="container my-5">
+        <div class="text-center mb-5 pb-3" data-aos="fade-up">
+            <h2 class="fw-bold display-6">Tin tức mới nhất</h2>
+        </div>
+        <div class="row g-4">
+            <?php if ($latestPosts && $latestPosts->num_rows > 0): ?>
+                <?php while($post = $latestPosts->fetch_assoc()): ?>
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                            <img src="<?= $post['thumbnail'] ?? 'assets/client/img/bg1.jpg' ?>" class="card-img-top" alt="<?= $post['title'] ?>" style="height: 200px; object-fit: cover;">
+                            <div class="card-body p-4">
+                                <p class="text-primary small fw-bold mb-2"><?= date('d/m/Y', strtotime($post['created_at'])) ?></p>
+                                <h5 class="card-title fw-bold mb-3 text-truncate-2"><?= $post['title'] ?></h5>
+                                <a href="index.php?url=news/<?= $post['slug'] ?>" class="text-decoration-none fw-bold small">Xem thêm <i class="bi bi-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php endif; ?>
         </div>
     </div>
 </section>

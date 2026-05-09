@@ -1,80 +1,51 @@
-<?php 
-require_once "views/admin/partials/header.php"; 
-require_once "views/admin/partials/sidebar.php"; 
-?>
+<?php require_once 'views/admin/partials/header.php'; ?>
 
-<div class="main-content">
-    <div class="main-content-inner">
-        <div class="row">
-            <div class="col-12 mt-5">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="header-title">Quản lý liên hệ</h4>
-                        
-                        <!-- Success Alert for better UX[cite: 10] -->
-                        <?php if (isset($_GET['success'])): ?>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <strong>Thành công!</strong> Trạng thái đã được cập nhật.
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span class="fa fa-times"></span>
-                                </button>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="single-table">
-                            <div class="table-responsive">
-                                <table class="table table-hover text-center">
-                                    <thead class="text-uppercase bg-light">
+<div class="main-content-inner">
+    <div class="row">
+        <div class="col-12 mt-5">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
+                    <h4 class="header-title mb-4">Quản lý Liên hệ</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover text-center align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Họ tên</th>
+                                    <th>Email</th>
+                                    <th>Lời nhắn</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (isset($contacts) && is_object($contacts) && $contacts->num_rows > 0): ?>
+                                    <?php while($c = $contacts->fetch_assoc()): ?>
                                         <tr>
-                                            <th>Ngày gửi</th>
-                                            <th>Họ tên</th>
-                                            <th>Email</th>
-                                            <th>Nội dung</th>
-                                            <th>Trạng thái</th>
-                                            <th>Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Changed variable to $contacts to match Controller[cite: 10] -->
-                                        <?php while($row = $contacts->fetch_assoc()): ?>
-                                        <tr>
-                                            <td><?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></td>
-                                            <td><?= htmlspecialchars($row['full_name']) ?></td>
-                                            <td><?= htmlspecialchars($row['email']) ?></td>
-                                            <td class="text-left"><?= mb_strimwidth($row['message'], 0, 50, "...") ?></td>
+                                            <td><?= $c['id'] ?></td>
+                                            <td class="fw-bold"><?= htmlspecialchars($c['name']) ?></td>
+                                            <td><?= htmlspecialchars($c['email']) ?></td>
+                                            <td class="text-left small" style="max-width: 250px;"><?= htmlspecialchars($c['message']) ?></td>
                                             <td>
-                                                <!-- Updated logic for string-based status[cite: 10] -->
-                                                <span class="badge <?= $row['status'] === 'read' ? 'badge-success' : 'badge-warning' ?>">
-                                                    <?= $row['status'] === 'read' ? 'Đã đọc' : 'Mới' ?>
-                                                </span>
+                                                <form action="index.php?url=admin/contacts/update" method="POST">
+                                                    <input type="hidden" name="id" value="<?= $c['id'] ?>">
+                                                    <select name="status" class="form-control form-control-sm rounded-pill" onchange="this.form.submit()">
+                                                        <option value="new" <?= $c['status'] == 'new' ? 'selected' : '' ?>>Mới</option>
+                                                        <option value="read" <?= $c['status'] == 'read' ? 'selected' : '' ?>>Đã đọc</option>
+                                                        <option value="replied" <?= $c['status'] == 'replied' ? 'selected' : '' ?>>Đã phản hồi</option>
+                                                    </select>
+                                                </form>
                                             </td>
                                             <td>
-                                                <div class="d-flex justify-content-center">
-                                                    <?php if($row['status'] !== 'read'): ?>
-                                                        <!-- POST Form for Security[cite: 10] -->
-                                                        <form action="/admin/contacts/update/<?= $row['id'] ?>" method="POST" class="mr-2">
-                                                            <input type="hidden" name="status" value="read">
-                                                            <button type="submit" class="btn btn-xs btn-success" title="Đánh dấu đã đọc">
-                                                                <i class="fa fa-check"></i>
-                                                            </button>
-                                                        </form>
-                                                    <?php endif; ?>
-
-                                                    <!-- Delete button using the route in your index.php[cite: 10] -->
-                                                    <a href="/admin/contacts/delete/<?= $row['id'] ?>" 
-                                                       class="btn btn-xs btn-danger" 
-                                                       onclick="return confirm('Bạn có chắc chắn muốn xóa liên hệ này?')"
-                                                       title="Xóa">
-                                                        <i class="fa fa-trash"></i>
-                                                    </a>
-                                                </div>
+                                                <a href="index.php?url=admin/contacts/delete&id=<?= $c['id'] ?>" class="text-danger" onclick="return confirm('Xóa liên hệ này?')"><i class="ti-trash"></i></a>
                                             </td>
                                         </tr>
-                                        <?php endwhile; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                    <?php endwhile; ?>
+                                <?php else: ?>
+                                    <tr><td colspan="6" class="py-5 text-muted">Không có tin nhắn liên hệ nào</td></tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -82,4 +53,4 @@ require_once "views/admin/partials/sidebar.php";
     </div>
 </div>
 
-<?php require_once "views/admin/partials/footer.php"; ?>
+<?php require_once 'views/admin/partials/footer.php'; ?>

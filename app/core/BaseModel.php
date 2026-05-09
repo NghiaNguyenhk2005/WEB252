@@ -1,9 +1,13 @@
 <?php
+
+/**
+ * Lớp Model cơ sở tích hợp bộ dựng truy vấn (Query Builder)
+ */
 class BaseModel {
     protected $conn;
     protected $table;
 
-    // Query builder state
+    // Trạng thái truy vấn
     protected $select = "*";
     protected $joins = [];
     protected $wheres = [];
@@ -17,9 +21,9 @@ class BaseModel {
         $this->table = $table;
     }
 
-    // ======================
-    // TYPE HANDLING
-    // ======================
+    /**
+     * Xử lý kiểu dữ liệu cho bind_param
+     */
     private function getType($value) {
         if (is_int($value)) return "i";
         if (is_float($value)) return "d";
@@ -34,10 +38,9 @@ class BaseModel {
         return $types;
     }
 
-    // ======================
-    // QUERY BUILDER
-    // ======================
-
+    /**
+     * Các phương thức xây dựng câu lệnh SQL
+     */
     public function select($fields = "*") {
         $this->select = $fields;
         return $this;
@@ -65,35 +68,48 @@ class BaseModel {
         return $this;
     }
 
-    // ======================
-    // BUILD & EXECUTE
-    // ======================
-
+    /**
+     * Thực thi và Lấy dữ liệu
+     */
     private function buildQuery() {
         $sql = "SELECT {$this->select} FROM {$this->table}";
-
-        if (!empty($this->joins)) {
-            $sql .= " " . implode(" ", $this->joins);
-        }
-
-        if (!empty($this->wheres)) {
-            $sql .= " WHERE " . implode(" AND ", $this->wheres);
-        }
-
-        if ($this->orderBy) {
-            $sql .= " " . $this->orderBy;
-        }
-
-        if ($this->limit) {
-            $sql .= " " . $this->limit . " " . $this->offset;
-        }
-
+        if (!empty($this->joins)) $sql .= " " . implode(" ", $this->joins);
+        if (!empty($this->wheres)) $sql .= " WHERE " . implode(" AND ", $this->wheres);
+        if ($this->orderBy) $sql .= " " . $this->orderBy;
+        if ($this->limit) $sql .= " " . $this->limit . " " . $this->offset;
         return $sql;
     }
 
+    /**
+     * Đếm tổng số bản ghi (phục vụ phân trang)
+     */
+    public function count() {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table}";
+        if (!empty($this->wheres)) $sql .= " WHERE " . implode(" AND ", $this->wheres);
+        
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return 0;
+        
+        if (!empty($this->bindings)) {
+            $types = $this->buildTypes($this->bindings);
+            $stmt->bind_param($types, ...$this->bindings);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result ? $result->fetch_assoc() : null;
+        return $row ? $row['total'] : 0;
+    }
+
+    /**
+     * Lấy danh sách kết quả
+     */
     public function get() {
         $sql = $this->buildQuery();
         $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->reset();
+            return null;
+        }
 
         if (!empty($this->bindings)) {
             $types = $this->buildTypes($this->bindings);
@@ -102,22 +118,22 @@ class BaseModel {
 
         $stmt->execute();
         $result = $stmt->get_result();
-
-        $this->reset(); // reset state
-
+        $this->reset(); // Làm mới trạng thái sau khi truy vấn
         return $result;
     }
 
+    /**
+     * Lấy bản ghi đầu tiên
+     */
     public function first() {
         $this->limit(1);
         $result = $this->get();
-        return $result->fetch_assoc();
+        return $result ? $result->fetch_assoc() : null;
     }
 
-    // ======================
-    // CRUD
-    // ======================
-
+    /**
+     * Các tác vụ CRUD cơ bản (Thêm, Sửa, Xóa)
+     */
     public function create($data) {
         $columns = implode(",", array_keys($data));
         $placeholders = implode(",", array_fill(0, count($data), "?"));
@@ -127,15 +143,16 @@ class BaseModel {
 
         $types = $this->buildTypes($data);
         $values = array_values($data);
-
         $stmt->bind_param($types, ...$values);
 
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return $this->conn->insert_id;
+        }
+        return false;
     }
 
     public function update($id, $data) {
         $fields = implode(",", array_map(fn($k) => "$k = ?", array_keys($data)));
-
         $sql = "UPDATE {$this->table} SET $fields WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
 
@@ -144,34 +161,18 @@ class BaseModel {
         $values[] = $id;
 
         $stmt->bind_param($types, ...$values);
-
         return $stmt->execute();
     }
 
     public function delete($id) {
-        $stmt = $this->conn->prepare(
-            "DELETE FROM {$this->table} WHERE id = ?"
-        );
+        $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ?");
         $stmt->bind_param("i", $id);
         return $stmt->execute();
     }
 
-    // ======================
-    // SOFT DELETE
-    // ======================
-
-    public function softDelete($id) {
-        $stmt = $this->conn->prepare(
-            "UPDATE {$this->table} SET deleted_at = NOW() WHERE id = ?"
-        );
-        $stmt->bind_param("i", $id);
-        return $stmt->execute();
-    }
-
-    // ======================
-    // RESET QUERY
-    // ======================
-
+    /**
+     * Đặt lại trạng thái bộ dựng truy vấn
+     */
     private function reset() {
         $this->select = "*";
         $this->joins = [];

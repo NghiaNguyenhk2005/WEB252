@@ -1,14 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../../models/ContactModel.php';
-
 class ContactController
 {
     private $contactModel;
+    private $conn;
 
     public function __construct($conn)
     {
-        $this->contactModel = new ContactModel($conn);
+        $this->conn = $conn;
+        $this->contactModel = new ContactModel($this->conn);
     }
 
     public function index()

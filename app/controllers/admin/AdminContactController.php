@@ -1,37 +1,42 @@
 <?php
+
+/**
+ * Quản lý tin nhắn liên hệ phía Admin
+ */
 class AdminContactController {
     private $contactModel;
+    private $conn;
 
-    public function __construct() {
-        AuthMiddleware::admin(); // Security gate[cite: 3, 10]
-        global $conn;
+    public function __construct($conn) {
+        $this->conn = $conn;
+        AuthMiddleware::admin();
         require_once "app/models/ContactModel.php";
-        $this->contactModel = new ContactModel($conn);
+        $this->contactModel = new ContactModel($this->conn);
     }
 
     public function index() {
-        // Fetch all messages, newest first[cite: 9, 10]
-        $contacts = $this->contactModel->get("", "created_at DESC");
+        $contacts = $this->contactModel->orderBy("created_at", "DESC")->get();
         require_once "views/admin/contacts/index.php";
     }
 
-    // Handles changing status to anything (read, replied, etc.)
-    public function updateStatus($id) {
+    /**
+     * Cập nhật trạng thái tin nhắn (Mới, Đã đọc, Đã phản hồi)
+     */
+    public function updateStatus() {
+        $id = $_POST['id'];
         $status = $_POST['status'] ?? 'read'; 
         
-        // Use the inherited update method from BaseModel
         $this->contactModel->update($id, [
-            'status' => $status,
-            'updated_at' => date('Y-m-d H:i:s')
+            'status' => $status
         ]);
 
-        header("Location: /admin/contacts?success=1");
+        header("Location: index.php?url=admin/contacts&success=1");
         exit;
     }
 
     public function delete($id) {
-        $this->contactModel->delete($id); // From BaseModel[cite: 2]
-        header("Location: /admin/contacts?deleted=1");
+        $this->contactModel->delete($id);
+        header("Location: index.php?url=admin/contacts&deleted=1");
         exit;
     }
 }
