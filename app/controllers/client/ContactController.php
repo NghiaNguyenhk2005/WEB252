@@ -1,7 +1,15 @@
 <?php
+
+class ContactController
+{
 class ContactController extends BaseController {
     private $contactModel;
+    private $conn;
 
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+        $this->contactModel = new ContactModel($this->conn);
     public function __construct($conn) {
         $this->contactModel = new ContactModel($conn);
     }

@@ -1,20 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../../models/ContactModel.php';
-
-class ContactController
-{
-    private $contactModel;
-
-    public function __construct()
-    {
-        global $conn;
-
-        $this->contactModel = new ContactModel($conn);
-    }
-
-    public function index()
-    {
-        echo "Contact page";
+/**
+ * Quản lý danh mục sản phẩm
+ */
+class CategoryModel extends BaseModel {
+    public function __construct($conn) {
+        parent::__construct($conn, "categories");
     }
 }

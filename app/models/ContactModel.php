@@ -1,10 +1,20 @@
 <?php
+
+/**
+ * Quản lý tin nhắn liên hệ từ khách hàng
+ */
 class ContactModel extends BaseModel {
     public function __construct($conn) {
         parent::__construct($conn, "contacts");
     }
 
+    /**
+     * Tạo liên hệ mới
+     */
     public function createContact($data) {
+        return $this->create($data);
+    }
+}
         $data['status'] = 'new';
         $data['created_at'] = date('Y-m-d H:i:s');
         return $this->create($data);

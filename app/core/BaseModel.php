@@ -1,9 +1,13 @@
 <?php
+
+/**
+ * Lớp Model cơ sở tích hợp bộ dựng truy vấn (Query Builder)
+ */
 class BaseModel {
     protected $conn;
     protected $table;
 
-    // Query builder state
+    // Trạng thái truy vấn
     protected $select = "*";
     protected $joins = [];
     protected $wheres = [];
@@ -17,6 +21,9 @@ class BaseModel {
         $this->table = $table;
     }
 
+    /**
+     * Xử lý kiểu dữ liệu cho bind_param
+     */
     /** Expose raw connection for controllers that need custom queries */
     public function getConn() {
         return $this->conn;
@@ -37,6 +44,9 @@ class BaseModel {
         return $types;
     }
 
+    /**
+     * Các phương thức xây dựng câu lệnh SQL
+     */
     // ======================
     // QUERY BUILDER
     // ======================
@@ -67,6 +77,36 @@ class BaseModel {
         return $this;
     }
 
+    /**
+     * Thực thi và Lấy dữ liệu
+     */
+    private function buildQuery() {
+        $sql = "SELECT {$this->select} FROM {$this->table}";
+        if (!empty($this->joins)) $sql .= " " . implode(" ", $this->joins);
+        if (!empty($this->wheres)) $sql .= " WHERE " . implode(" AND ", $this->wheres);
+        if ($this->orderBy) $sql .= " " . $this->orderBy;
+        if ($this->limit) $sql .= " " . $this->limit . " " . $this->offset;
+        return $sql;
+    }
+
+    /**
+     * Đếm tổng số bản ghi (phục vụ phân trang)
+     */
+    public function count() {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table}";
+        if (!empty($this->wheres)) $sql .= " WHERE " . implode(" AND ", $this->wheres);
+        
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) return 0;
+        
+        if (!empty($this->bindings)) {
+            $types = $this->buildTypes($this->bindings);
+            $stmt->bind_param($types, ...$this->bindings);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result ? $result->fetch_assoc() : null;
+        return $row ? $row['total'] : 0;
     // ======================
     // BUILD & EXECUTE
     // ======================
@@ -79,9 +119,16 @@ class BaseModel {
         return $sql;
     }
 
+    /**
+     * Lấy danh sách kết quả
+     */
     public function get() {
         $sql  = $this->buildQuery();
         $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $this->reset();
+            return null;
+        }
 
         if (!empty($this->bindings)) {
             $types = $this->buildTypes($this->bindings);
@@ -90,22 +137,41 @@ class BaseModel {
 
         $stmt->execute();
         $result = $stmt->get_result();
+        $this->reset(); // Làm mới trạng thái sau khi truy vấn
         $this->reset();
         return $result;
     }
 
+    /**
+     * Lấy bản ghi đầu tiên
+     */
     public function first() {
         $this->limit(1);
         $result = $this->get();
-        return $result->fetch_assoc();
+        return $result ? $result->fetch_assoc() : null;
     }
 
+    /**
+     * Các tác vụ CRUD cơ bản (Thêm, Sửa, Xóa)
+     */
     // ======================
     // CRUD
     // ======================
     public function create($data) {
         $columns      = implode(",", array_keys($data));
         $placeholders = implode(",", array_fill(0, count($data), "?"));
+
+        $sql = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+        $stmt = $this->conn->prepare($sql);
+
+        $types = $this->buildTypes($data);
+        $values = array_values($data);
+        $stmt->bind_param($types, ...$values);
+
+        if ($stmt->execute()) {
+            return $this->conn->insert_id;
+        }
+        return false;
         $sql          = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
         $stmt         = $this->conn->prepare($sql);
         $types        = $this->buildTypes($data);
@@ -116,6 +182,10 @@ class BaseModel {
 
     public function update($id, $data) {
         $fields = implode(",", array_map(fn($k) => "$k = ?", array_keys($data)));
+        $sql = "UPDATE {$this->table} SET $fields WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+
+        $types = $this->buildTypes($data) . "i";
         $sql    = "UPDATE {$this->table} SET $fields WHERE id = ?";
         $stmt   = $this->conn->prepare($sql);
         $types  = $this->buildTypes($data) . "i";
@@ -137,6 +207,9 @@ class BaseModel {
         return $stmt->execute();
     }
 
+    /**
+     * Đặt lại trạng thái bộ dựng truy vấn
+     */
     // ======================
     // RESET QUERY STATE
     // ======================
