@@ -53,22 +53,13 @@ class AuthController extends BaseController {
             if (empty($email) || empty($password)) {
                 $error = 'Vui lòng nhập email và mật khẩu.';
             } else {
+                // findByEmail now returns role via JOIN
                 $user = $this->authModel->findByEmail($email);
                 if ($user && password_verify($password, $user['password'])) {
                     if ($user['status'] == 0) {
                         $error = 'Tài khoản của bạn đã bị khoá.';
                     } else {
-                        $uid        = (int)$user['id'];
-                        $conn       = $this->authModel->getConn();
-                        $roleResult = $conn->query(
-                            "SELECT r.name FROM roles r
-                             INNER JOIN user_roles ur ON r.id = ur.role_id
-                             WHERE ur.user_id = $uid LIMIT 1"
-                        );
-                        $roleRow = $roleResult ? $roleResult->fetch_assoc() : null;
-                        $role    = $roleRow['name'] ?? 'member';
-
-                        // Store only safe fields — never store password hash in session
+                        $role = $user['role'] ?? 'member';
                         $_SESSION['user'] = [
                             'id'       => $user['id'],
                             'username' => $user['username'],
@@ -77,7 +68,6 @@ class AuthController extends BaseController {
                             'status'   => $user['status'],
                             'role'     => $role,
                         ];
-
                         $this->redirect($role === 'admin' ? '/admin/contacts' : '/');
                     }
                 } else {
@@ -95,6 +85,44 @@ class AuthController extends BaseController {
     public function logout() {
         session_destroy();
         $this->redirect('/login');
+    }
+
+    public function forgotPassword() {
+        $error = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
+            $user = $this->authModel->verifyUserForReset(
+                $_POST['username'] ?? '',
+                $_POST['email']    ?? ''
+            );
+            if ($user) {
+                $_SESSION['reset_user_id'] = $user['id'];
+                $this->redirect('/reset-password');
+            }
+            $error = 'Thông tin không chính xác.';
+        }
+        global $globalSettings;
+        $this->view('client/auth/forgot_password', [
+            'globalSettings' => $globalSettings,
+            'error'          => $error,
+        ]);
+    }
+
+    public function resetPasswordPage() {
+        if (!isset($_SESSION['reset_user_id'])) {
+            $this->redirect('/forgot-password');
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
+            $this->authModel->updatePassword(
+                $_SESSION['reset_user_id'],
+                $_POST['password'] ?? ''
+            );
+            unset($_SESSION['reset_user_id']);
+            $this->redirect('/login?reset_success=1');
+        }
+        global $globalSettings;
+        $this->view('client/auth/reset_password', ['globalSettings' => $globalSettings]);
     }
 
     public function profile() {
@@ -134,11 +162,10 @@ class AuthController extends BaseController {
                     $user    = $this->authModel->findById((int)$_SESSION['user']['id']);
                     $success = 'Cập nhật thông tin thành công.';
                 }
-
             } elseif ($action === 'change_password') {
                 $current = $_POST['current_password'] ?? '';
-                $new     = $_POST['new_password'] ?? '';
-                $confirm = $_POST['confirm_password'] ?? '';
+                $new     = $_POST['new_password']     ?? '';
+                $confirm = $_POST['confirm_password']  ?? '';
 
                 if (!password_verify($current, $user['password'])) {
                     $error = 'Mật khẩu hiện tại không đúng.';

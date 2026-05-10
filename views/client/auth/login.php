@@ -10,11 +10,17 @@
                         <i class="bi bi-check-circle me-2"></i>Đăng ký thành công! Hãy đăng nhập.
                     </div>
                 <?php endif; ?>
+                <?php if (isset($_GET['reset_success'])): ?>
+                    <div class="alert alert-success rounded-3 mb-4 text-center fw-semibold">
+                        <i class="bi bi-check-circle me-2"></i>Mật khẩu đã được cập nhật thành công!
+                    </div>
+                <?php endif; ?>
 
                 <div class="card border-0 shadow-lg rounded-4 p-2">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:56px;height:56px;">
+                            <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width:56px;height:56px;">
                                 <i class="bi bi-person-fill text-primary fs-4"></i>
                             </div>
                             <h4 class="fw-bold mb-1">Đăng nhập</h4>
@@ -32,16 +38,20 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold small">Email</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-envelope text-muted"></i>
+                                    </span>
                                     <input type="email" name="email" class="form-control border-start-0 ps-0"
                                            placeholder="you@example.com"
                                            value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-2">
                                 <label class="form-label fw-semibold small">Mật khẩu</label>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-lock text-muted"></i></span>
+                                    <span class="input-group-text bg-light border-end-0">
+                                        <i class="bi bi-lock text-muted"></i>
+                                    </span>
                                     <input type="password" name="password" id="loginPwd"
                                            class="form-control border-start-0 ps-0 border-end-0"
                                            placeholder="••••••••" required>
@@ -50,6 +60,11 @@
                                         <i class="bi bi-eye text-muted"></i>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="mb-4 text-end">
+                                <a href="<?= BASE_PATH ?>/forgot-password" class="small text-muted text-decoration-none">
+                                    Quên mật khẩu?
+                                </a>
                             </div>
                             <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2 fw-bold">
                                 Đăng nhập

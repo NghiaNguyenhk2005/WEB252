@@ -1,4 +1,16 @@
 <?php
+
+/**
+ * Cấu hình website và thông tin doanh nghiệp
+ */
+class AdminSettingController {
+    private $settingModel;
+    private $conn;
+
+    public function __construct($conn) {
+        $this->conn = $conn;
+        AuthMiddleware::admin(); 
+        $this->settingModel = new SettingModel($this->conn);
 class AdminSettingController extends BaseController {
     private $settingModel;
     private $sliderModel;
@@ -12,6 +24,26 @@ class AdminSettingController extends BaseController {
     public function index() {
         global $globalSettings;
         $globalSettings = $this->settingModel->getAllSettings();
+        require_once "views/admin/settings/index.php";
+    }
+
+    /**
+     * Cập nhật thông tin chung và upload Logo
+     */
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $adminId = $_SESSION['user']['id'];
+            
+            $inputs = [
+                'company_phone' => htmlspecialchars(trim($_POST['company_phone'] ?? '')),
+                'company_email' => filter_var($_POST['company_email'] ?? '', FILTER_SANITIZE_EMAIL),
+                'company_address' => htmlspecialchars(trim($_POST['company_address'] ?? '')),
+                'site_name' => htmlspecialchars(trim($_POST['site_name'] ?? ''))
+            ];
+
+            foreach ($inputs as $key => $value) {
+                if (!empty($value)) {
+                    $this->settingModel->updateByKey($key, $value, $adminId);
         $sliders        = $this->sliderModel->getAll();
         $this->view('admin/settings/index', [
             'globalSettings' => $globalSettings,
@@ -49,6 +81,13 @@ class AdminSettingController extends BaseController {
         $this->redirect('/admin/settings?success=1');
     }
 
+            // Xử lý upload Logo nội bộ
+            if (isset($_FILES['site_logo']) && $_FILES['site_logo']['error'] === UPLOAD_ERR_OK) {
+                $this->handleLogoUpload($adminId);
+            }
+
+            header("Location: index.php?url=admin/settings&success=1");
+            exit;
     public function sliderCreate() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') { $this->redirect('/admin/settings'); }
         $this->verifyCsrf();
@@ -69,6 +108,9 @@ class AdminSettingController extends BaseController {
             }
         }
 
+    private function handleLogoUpload($adminId) {
+        $targetDir = "uploads/system/";
+        if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
         if ($imageUrl) {
             $this->sliderModel->create([
                 'image_url'     => $imageUrl,
@@ -91,6 +133,11 @@ class AdminSettingController extends BaseController {
         $this->redirect('/admin/settings?deleted=1#sliders');
     }
 
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif', 'svg');
+        if (in_array($fileExtension, $allowTypes)) {
+            if (move_uploaded_file($_FILES["site_logo"]["tmp_name"], $targetFilePath)) {
+                $this->settingModel->updateByKey('site_logo', $targetFilePath, $adminId);
+            }
     public function sliderToggle($id) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') $this->verifyCsrf();
         $slider = $this->sliderModel->where('id', (int)$id)->first();

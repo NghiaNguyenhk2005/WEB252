@@ -7,7 +7,8 @@
                 <div class="card border-0 shadow-lg rounded-4 p-2">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:56px;height:56px;">
+                            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width:56px;height:56px;">
                                 <i class="bi bi-person-plus-fill text-success fs-4"></i>
                             </div>
                             <h4 class="fw-bold mb-1">Tạo tài khoản</h4>
@@ -69,7 +70,7 @@
                                            class="form-control border-start-0 ps-0"
                                            placeholder="Nhập lại mật khẩu" required>
                                 </div>
-                                <small id="pwdMatch" class="d-none text-danger fw-semibold">
+                                <small id="pwdMatch" class="d-none text-danger fw-semibold mt-1 d-block">
                                     <i class="bi bi-x-circle me-1"></i>Mật khẩu không khớp
                                 </small>
                             </div>
@@ -117,20 +118,16 @@ document.getElementById('regPwd').addEventListener('input', function() {
         {w:'100%',cls:'bg-success',txt:'Rất mạnh'},
     ];
     const l = levels[Math.min(score - 1, 4)] || levels[0];
-    fill.style.width = l.w;
-    fill.className   = 'progress-bar ' + l.cls;
-    label.textContent = l.txt;
+    fill.style.width = l.w; fill.className = 'progress-bar ' + l.cls; label.textContent = l.txt;
 });
 document.getElementById('confirmPwd').addEventListener('input', function() {
     const match = document.getElementById('pwdMatch');
     (this.value && this.value !== document.getElementById('regPwd').value)
-        ? match.classList.remove('d-none')
-        : match.classList.add('d-none');
+        ? match.classList.remove('d-none') : match.classList.add('d-none');
 });
 document.getElementById('regForm').addEventListener('submit', function(e) {
     if (document.getElementById('regPwd').value !== document.getElementById('confirmPwd').value) {
-        e.preventDefault();
-        document.getElementById('pwdMatch').classList.remove('d-none');
+        e.preventDefault(); document.getElementById('pwdMatch').classList.remove('d-none');
     }
 });
 </script>

@@ -4,24 +4,23 @@ class SliderModel extends BaseModel {
         parent::__construct($conn, "sliders");
     }
 
-    /**
-     * Get all active sliders ordered by display_order
-     */
+    // Used by HomeController — returns array
     public function getActive() {
-        $sql = "SELECT * FROM sliders WHERE status = 1 ORDER BY display_order ASC";
+        $sql    = "SELECT * FROM sliders WHERE status = 1 ORDER BY display_order ASC";
         $result = $this->conn->query($sql);
-        $rows = [];
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
-        }
+        $rows   = [];
+        while ($row = $result->fetch_assoc()) $rows[] = $row;
         return $rows;
     }
 
-    /**
-     * Get all sliders for admin management
-     */
+    // Alias used by partner's code
+    public function getActiveSliders() {
+        return $this->getActive();
+    }
+
+    // Used by admin settings — returns mysqli_result
     public function getAll($limit = 20, $offset = 0) {
-        $sql = "SELECT * FROM sliders ORDER BY display_order ASC LIMIT ? OFFSET ?";
+        $sql  = "SELECT * FROM sliders ORDER BY display_order ASC LIMIT ? OFFSET ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ii", $limit, $offset);
         $stmt->execute();
@@ -30,7 +29,7 @@ class SliderModel extends BaseModel {
 
     public function countAll() {
         $result = $this->conn->query("SELECT COUNT(*) as total FROM sliders");
-        return $result->fetch_assoc()['total'];
+        return (int)$result->fetch_assoc()['total'];
     }
 
     public function toggleStatus($id, $status) {

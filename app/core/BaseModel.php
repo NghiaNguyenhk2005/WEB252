@@ -2,13 +2,11 @@
 class BaseModel {
     protected $conn;
     protected $table;
-
-    // Query builder state
-    protected $select = "*";
-    protected $joins = [];
-    protected $wheres = [];
+    protected $select   = "*";
+    protected $joins    = [];
+    protected $wheres   = [];
     protected $bindings = [];
-    protected $orderBy = "";
+    protected $orderBy  = "";
     protected $limitVal = "";
     protected $offsetVal = "";
 
@@ -17,14 +15,11 @@ class BaseModel {
         $this->table = $table;
     }
 
-    /** Expose raw connection for controllers that need custom queries */
     public function getConn() {
         return $this->conn;
     }
 
-    // ======================
-    // TYPE HANDLING
-    // ======================
+    // ── Type helpers ─────────────────────────────────────────
     private function getType($value) {
         if (is_int($value))   return "i";
         if (is_float($value)) return "d";
@@ -33,21 +28,19 @@ class BaseModel {
 
     private function buildTypes($values) {
         $types = "";
-        foreach ($values as $v) { $types .= $this->getType($v); }
+        foreach ($values as $v) $types .= $this->getType($v);
         return $types;
     }
 
-    // ======================
-    // QUERY BUILDER
-    // ======================
+    // ── Query builder ────────────────────────────────────────
     public function select($fields = "*") {
         $this->select = $fields;
         return $this;
     }
 
     public function where($column, $value) {
-        $this->wheres[]    = "$column = ?";
-        $this->bindings[]  = $value;
+        $this->wheres[]   = "$column = ?";
+        $this->bindings[] = $value;
         return $this;
     }
 
@@ -67,9 +60,23 @@ class BaseModel {
         return $this;
     }
 
-    // ======================
-    // BUILD & EXECUTE
-    // ======================
+    // ── Count (for pagination) ───────────────────────────────
+    public function count() {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table}";
+        if (!empty($this->wheres)) $sql .= " WHERE " . implode(" AND ", $this->wheres);
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) { $this->reset(); return 0; }
+        if (!empty($this->bindings)) {
+            $types = $this->buildTypes($this->bindings);
+            $stmt->bind_param($types, ...$this->bindings);
+        }
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $this->reset();
+        return $row ? (int)$row['total'] : 0;
+    }
+
+    // ── Execute ──────────────────────────────────────────────
     private function buildQuery() {
         $sql = "SELECT {$this->select} FROM {$this->table}";
         if (!empty($this->joins))  $sql .= " " . implode(" ", $this->joins);
@@ -82,12 +89,11 @@ class BaseModel {
     public function get() {
         $sql  = $this->buildQuery();
         $stmt = $this->conn->prepare($sql);
-
+        if (!$stmt) { $this->reset(); return null; }
         if (!empty($this->bindings)) {
             $types = $this->buildTypes($this->bindings);
             $stmt->bind_param($types, ...$this->bindings);
         }
-
         $stmt->execute();
         $result = $stmt->get_result();
         $this->reset();
@@ -97,12 +103,10 @@ class BaseModel {
     public function first() {
         $this->limit(1);
         $result = $this->get();
-        return $result->fetch_assoc();
+        return $result ? $result->fetch_assoc() : null;
     }
 
-    // ======================
-    // CRUD
-    // ======================
+    // ── CRUD ─────────────────────────────────────────────────
     public function create($data) {
         $columns      = implode(",", array_keys($data));
         $placeholders = implode(",", array_fill(0, count($data), "?"));
@@ -111,7 +115,8 @@ class BaseModel {
         $types        = $this->buildTypes($data);
         $values       = array_values($data);
         $stmt->bind_param($types, ...$values);
-        return $stmt->execute();
+        if ($stmt->execute()) return $this->conn->insert_id;
+        return false;
     }
 
     public function update($id, $data) {
@@ -137,9 +142,7 @@ class BaseModel {
         return $stmt->execute();
     }
 
-    // ======================
-    // RESET QUERY STATE
-    // ======================
+    // ── Reset state ──────────────────────────────────────────
     private function reset() {
         $this->select    = "*";
         $this->joins     = [];

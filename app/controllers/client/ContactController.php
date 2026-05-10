@@ -17,14 +17,14 @@ class ContactController extends BaseController {
         }
         $this->verifyCsrf();
 
-        $name    = htmlspecialchars(trim($_POST['name'] ?? ''));
+        $name    = htmlspecialchars(trim($_POST['name']    ?? ''));
         $email   = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
         $message = htmlspecialchars(trim($_POST['message'] ?? ''));
 
         $errors = [];
-        if (strlen($name) < 2)                               $errors[] = 'name';
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL))      $errors[] = 'email';
-        if (strlen($message) < 10)                           $errors[] = 'message';
+        if (strlen($name) < 2)                           $errors[] = 'name';
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL))  $errors[] = 'email';
+        if (strlen($message) < 10)                       $errors[] = 'message';
 
         if (!empty($errors)) {
             $this->redirect('/contact?error=' . implode(',', $errors));

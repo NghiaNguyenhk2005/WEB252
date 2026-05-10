@@ -5,7 +5,7 @@ return [
         'host' => 'localhost',
         'username' => 'root',
         'password' => '',
-        'database' => 'tass',
+        'database' => 'TaSS',
     ],
     'app' => [
         'name' => 'TechSaaS',
