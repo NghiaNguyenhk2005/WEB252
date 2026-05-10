@@ -1,0 +1,43 @@
+/* --- ADMIN CUSTOM STYLES --- */
+
+/* Dashboard Home */
+.bg-gradient-primary { background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); }
+.border-left-primary { border-left: 0.25rem solid #4e73df !important; }
+.border-left-success { border-left: 0.25rem solid #1cc88a !important; }
+.border-left-info { border-left: 0.25rem solid #36b9cc !important; }
+.border-left-warning { border-left: 0.25rem solid #f6c23e !important; }
+.icon-circle { height: 3rem; width: 3rem; border-radius: 100%; display: flex; align-items: center; justify-content: center; }
+.bg-primary-light { background-color: #f0f3ff; }
+.bg-success-light { background-color: #e6fffa; }
+.bg-info-light { background-color: #e0f7fa; }
+.bg-warning-light { background-color: #fff9db; }
+.bg-danger-light { background-color: #fff5f5; }
+.text-xs { font-size: .7rem; }
+
+/* Tables & General UI */
+.bg-light-gray { background-color: #fcfcfc; }
+.extra-small { font-size: 0.75rem; }
+.shadow-xs { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.cursor-pointer { cursor: pointer; }
+
+/* Form Elements */
+.border-light-gray { border: 1px solid #e9ecef; }
+.border-dashed { border: 2px dashed #dee2e6; }
+.form-select-sm { font-size: 0.8rem; min-width: 130px; }
+
+/* Status Badges in Select */
+select.bg-warning { background-color: #ffc107 !important; color: #000; }
+select.bg-success { background-color: #28a745 !important; color: #fff; }
+select.bg-info { background-color: #17a2b8 !important; color: #fff; }
+select.bg-danger { background-color: #dc3545 !important; color: #fff; }
+
+/* Sidebar Enhancements */
+.bg-gradient-dark { background: linear-gradient(180deg, #1a1a1a 0%, #333333 100%); }
+.menu-title { letter-spacing: 1px; font-weight: 700; color: #888; }
+.metismenu li a { transition: all 0.3s ease; border-radius: 8px; margin: 2px 15px; padding: 12px 20px !important; }
+.metismenu li.active > a { background: rgba(78, 115, 223, 0.1); color: #4e73df !important; font-weight: 600; }
+.metismenu li a:hover { background: rgba(0,0,0,0.05); }
+.metismenu li a i { margin-right: 12px; font-size: 1.1rem; }
+
+/* FAQ Answering */
+.border-left-primary-bold { border-left: 5px solid #4e73df; }
