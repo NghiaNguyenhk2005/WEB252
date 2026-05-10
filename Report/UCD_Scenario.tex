@@ -1,0 +1,190 @@
+\section{Use-case và kịch bản vận hành (Usecase scenario)}
+
+Dưới đây là 8 kịch bản vận hành trọng tâm của hệ thống website doanh nghiệp, được mô tả chi tiết các luồng xử lý và ràng buộc dữ liệu.
+
+% ========================= UC-ADM-001: LOGIN =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-ADM-001 \\ \hline
+\textbf{Use-case} & Đăng nhập hệ thống quản trị (Common Task) \\ \hline
+\textbf{Actor} & Quản trị viên \\ \hline
+\textbf{Description} & Cho phép Quản trị viên đăng nhập vào hệ thống quản lý nội dung (CMS) để điều phối hoạt động website. \\ \hline
+\textbf{Precondition} & Quản trị viên đã có tài khoản hợp lệ trong cơ sở dữ liệu. \\ \hline
+\textbf{Postcondition} & Phiên làm việc (Session) được khởi tạo; Quản trị viên truy cập vào Dashboard. \\ \hline
+\textbf{Trigger} & Quản trị viên truy cập trang \texttt{/admin} và nhập thông tin. \\ \hline
+\textbf{Normal Flow} & 
+1. Hệ thống hiển thị form đăng nhập. \newline
+2. Quản trị viên nhập Tên đăng nhập và Mật khẩu. \newline
+3. Hệ thống kiểm tra thông tin trong cơ sở dữ liệu MySQL. \newline
+4. Hệ thống xác thực mật khẩu (sử dụng \texttt{password\_verify}). \newline
+5. Nếu hợp lệ, hệ thống tạo phiên đăng nhập và chuyển hướng vào Dashboard. \\ \hline
+\textbf{Alternative Flow} & Không có. \\ \hline
+\textbf{Exception Flow} & 
+E1 - Sai thông tin: Hệ thống báo lỗi "Tài khoản hoặc mật khẩu không chính xác" và yêu cầu nhập lại. \newline
+E2 - Lỗi kết nối DB: Hệ thống hiển thị thông báo lỗi kỹ thuật. \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-ADM-002: CONFIG =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-ADM-002 \\ \hline
+\textbf{Use-case} & Cấu hình thông tin liên hệ Website (Task 1) \\ \hline
+\textbf{Actor} & Quản trị viên \\ \hline
+\textbf{Description} & Cập nhật các thông tin cơ bản như Hotline, Email, Địa chỉ công ty hiển thị tại Header/Footer. \\ \hline
+\textbf{Precondition} & Quản trị viên đã đăng nhập thành công. \\ \hline
+\textbf{Postcondition} & Thông tin liên hệ mới được cập nhật trên toàn bộ website. \\ \hline
+\textbf{Trigger} & Quản trị viên truy cập mục "Cài đặt chung" từ Dashboard. \\ \hline
+\textbf{Normal Flow} & 
+1. Hệ thống hiển thị các thông tin cấu hình hiện tại từ bảng \texttt{settings}. \newline
+2. Quản trị viên thay đổi các trường dữ liệu cần thiết. \newline
+3. Quản trị viên nhấn nút "Lưu thay đổi". \newline
+4. Hệ thống cập nhật dữ liệu vào MySQL. \newline
+5. Hệ thống xóa cache (nếu có) và hiển thị thông báo thành công. \\ \hline
+\textbf{Alternative Flow} & A1 - Hủy chỉnh sửa: Quản trị viên nhấn "Hủy", hệ thống quay về dữ liệu cũ. \\ \hline
+\textbf{Exception Flow} & E1 - Dữ liệu không hợp lệ: Số điện thoại hoặc Email sai định dạng, hệ thống yêu cầu kiểm tra lại. \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-ADM-003: CONTACT MGMT =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-ADM-003 \\ \hline
+\textbf{Use-case} & Quản lý phản hồi khách hàng (Task 1) \\ \hline
+\textbf{Actor} & Quản trị viên \\ \hline
+\textbf{Description} & Xem, phân loại và cập nhật trạng thái các yêu cầu liên hệ gửi từ khách hàng. \\ \hline
+\textbf{Precondition} & Đã có dữ liệu khách hàng gửi từ form liên hệ. \\ \hline
+\textbf{Postcondition} & Trạng thái yêu cầu được cập nhật, ghi chú xử lý được lưu lại. \\ \hline
+\textbf{Trigger} & Quản trị viên mở mục "Hộp thư liên hệ". \\ \hline
+\textbf{Normal Flow} & 
+1. Hệ thống liệt kê danh sách liên hệ theo thời gian mới nhất. \newline
+2. Quản trị viên nhấn xem chi tiết một yêu cầu. \newline
+3. Quản trị viên thực hiện liên hệ tư vấn cho khách hàng. \newline
+4. Quản trị viên cập nhật trạng thái thành "Đã xử lý" và thêm ghi chú. \newline
+5. Hệ thống lưu trạng thái mới. \\ \hline
+\textbf{Alternative Flow} & A1 - Xóa liên hệ: Quản trị viên xóa các tin nhắn spam hoặc tin nhắn rác. \\ \hline
+\textbf{Exception Flow} & E1 - Lỗi cập nhật: Hệ thống báo lỗi khi không thể lưu trạng thái mới. \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-ADM-004: ABOUT US =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-ADM-004 \\ \hline
+\textbf{Use-case} & Biên tập nội dung Giới thiệu (Task 2) \\ \hline
+\textbf{Actor} & Quản trị viên \\ \hline
+\textbf{Description} & Chỉnh sửa nội dung bài viết về lịch sử, tầm nhìn, sứ mệnh của doanh nghiệp. \\ \hline
+\textbf{Precondition} & Quản trị viên đã đăng nhập và truy cập module "Quản lý nội dung". \\ \hline
+\textbf{Postcondition} & Bài viết giới thiệu mới được hiển thị tại trang chủ/trang giới thiệu. \\ \hline
+\textbf{Normal Flow} & 
+1. Quản trị viên chọn bài viết "Giới thiệu chung". \newline
+2. Hệ thống mở trình biên tập nội dung. \newline
+3. Quản trị viên sửa văn bản, thay đổi hình ảnh minh họa. \newline
+4. Quản trị viên nhấn "Cập nhật bài viết". \newline
+5. Hệ thống lưu nội dung và ghi nhận thời gian chỉnh sửa. \\ \hline
+\textbf{Alternative Flow} & A1 - Xem trước: Quản trị viên nhấn "Preview" để xem hiển thị trước khi lưu. \\ \hline
+\textbf{Exception Flow} & E1 - Lỗi tải ảnh: Ảnh vượt dung lượng hoặc sai định dạng, hệ thống báo lỗi. \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-ADM-005: Q&A MGMT =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-ADM-005 \\ \hline
+\textbf{Use-case} & Quản trị bộ câu hỏi thường gặp Q\&A (Task 2) \\ \hline
+\textbf{Actor} & Quản trị viên \\ \hline
+\textbf{Description} & Thêm, sửa, xóa các câu hỏi và câu trả lời để hỗ trợ khách hàng tự động. \\ \hline
+\textbf{Precondition} & Quản trị viên truy cập mục "Quản lý Q\&A". \\ \hline
+\textbf{Postcondition} & Danh sách Q\&A được cập nhật chính xác. \\ \hline
+\textbf{Normal Flow} & 
+1. Quản trị viên chọn "Thêm câu hỏi mới". \newline
+2. Nhập nội dung câu hỏi, câu trả lời và chọn phân loại chủ đề. \newline
+3. Nhấn "Lưu". \newline
+4. Hệ thống thực hiện lệnh \texttt{INSERT} vào MySQL. \newline
+5. Hệ thống làm mới danh sách hiển thị. \\ \hline
+\textbf{Alternative Flow} & A1 - Sửa/Xóa: Quản trị viên chọn các bản ghi hiện có để chỉnh sửa hoặc xóa bỏ. \\ \hline
+\textbf{Exception Flow} & E1 - Trùng lặp: Câu hỏi đã tồn tại, hệ thống đưa ra cảnh báo. \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-GUE-001: SUBMIT FORM =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-GUE-001 \\ \hline
+\textbf{Use-case} & Gửi yêu cầu liên hệ (Task 1 - Frontend) \\ \hline
+\textbf{Actor} & Khách hàng (Guest) \\ \hline
+\textbf{Description} & Cho phép khách hàng gửi thông tin thắc mắc về cho doanh nghiệp. \\ \hline
+\textbf{Precondition} & Khách hàng truy cập vào website trang "Liên hệ". \\ \hline
+\textbf{Postcondition} & Dữ liệu được lưu vào Database; Khách hàng nhận thông báo thành công. \\ \hline
+\textbf{Trigger} & Khách hàng nhấn nút "Gửi tin nhắn" tại form liên hệ. \\ \hline
+\textbf{Normal Flow} & 
+1. Khách hàng điền: Họ tên, Email, Tiêu đề, Nội dung. \newline
+2. Hệ thống kiểm tra dữ liệu đầu vào (Validation). \newline
+3. Hệ thống lưu thông tin vào bảng \texttt{contacts}. \newline
+4. Hệ thống hiển thị thông báo: "Cảm ơn bạn, yêu cầu đã được gửi!". \\ \hline
+\textbf{Alternative Flow} & Không có. \\ \hline
+\textbf{Exception Flow} & E1 - Thiếu dữ liệu: Hệ thống báo lỗi "Vui lòng điền đầy đủ các trường bắt buộc". \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-GUE-002: SEARCH Q&A =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-GUE-002 \\ \hline
+\textbf{Use-case} & Tra cứu thông tin Q\&A (Task 2 - Frontend) \\ \hline
+\textbf{Actor} & Khách hàng (Guest) \\ \hline
+\textbf{Description} & Khách hàng tìm kiếm các câu trả lời có sẵn để giải đáp thắc mắc nhanh chóng. \\ \hline
+\textbf{Precondition} & Website đã có dữ liệu Q\&A do Admin soạn thảo. \\ \hline
+\textbf{Postcondition} & Khách hàng tìm thấy thông tin cần thiết. \\ \hline
+\textbf{Normal Flow} & 
+1. Khách hàng vào trang "Hỏi đáp". \newline
+2. Khách hàng nhập từ khóa vào ô tìm kiếm. \newline
+3. Hệ thống lọc và hiển thị các câu hỏi phù hợp. \newline
+4. Khách hàng nhấn vào câu hỏi để xem chi tiết câu trả lời. \\ \hline
+\textbf{Alternative Flow} & A1 - Xem theo chủ đề: Khách hàng chọn các danh mục (Kỹ thuật, Bán hàng, ...) để lọc. \\ \hline
+\textbf{Exception Flow} & E1 - Không tìm thấy: Hệ thống báo "Không có kết quả phù hợp, vui lòng gửi liên hệ". \\ \hline
+\end{tabular}
+\end{table}
+
+% ========================= UC-ADM-006: BANNER =========================
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|p{3.5cm}|p{9.5cm}|}
+\hline
+\textbf{Use-case ID} & UC-ADM-006 \\ \hline
+\textbf{Use-case} & Thay đổi ảnh Banner trang chủ (Task 1) \\ \hline
+\textbf{Actor} & Quản trị viên \\ \hline
+\textbf{Description} & Cập nhật hình ảnh quảng bá trên Slide/Banner chính của trang chủ. \\ \hline
+\textbf{Precondition} & Quản trị viên đã chuẩn bị hình ảnh đúng kích thước. \\ \hline
+\textbf{Postcondition} & Giao diện trang chủ thay đổi hình ảnh mới. \\ \hline
+\textbf{Normal Flow} & 
+1. Quản trị viên vào mục "Quản lý Banner". \newline
+2. Chọn "Tải ảnh mới" và nhập liên kết (nếu có). \newline
+3. Nhấn "Áp dụng". \newline
+4. Hệ thống lưu ảnh vào thư mục \texttt{uploads} và cập nhật đường dẫn trong DB. \\ \hline
+\textbf{Alternative Flow} & A1 - Tắt Banner: Quản trị viên tạm ẩn banner mà không cần xóa. \\ \hline
+\textbf{Exception Flow} & E1 - File không hợp lệ: Định dạng không phải JPG/PNG, hệ thống từ chối. \\ \hline
+\end{tabular}
+\end{table}

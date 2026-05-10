@@ -1,0 +1,38 @@
+\section{Yêu cầu phi chức năng (Non-Functional Requirements)}
+
+Để đảm bảo website doanh nghiệp hoạt động chuyên nghiệp, ổn định và an toàn, hệ thống cần đáp ứng các tiêu chuẩn phi chức năng sau đây:
+
+\subsection{Hiệu năng (Performance)}
+\begin{itemize}
+    \item \textbf{Tốc độ phản hồi:} Các thao tác truy xuất thông tin trang chủ, giới thiệu và Q\&A phải được xử lý trong vòng dưới 2 giây.
+    \item \textbf{Tải trang tối ưu:} Sử dụng kỹ thuật tối ưu hóa hình ảnh và bộ nhớ đệm (cache) phía trình duyệt để giảm thiểu thời gian tải trang trung bình xuống dưới 1 giây cho các lần truy cập tiếp theo.
+    \item \textbf{Khả năng chịu tải:} Hệ thống có thể phục vụ đồng thời tối thiểu 500 người dùng truy cập cùng lúc mà không xảy ra tình trạng chậm trễ hoặc treo máy chủ.
+\end{itemize}
+
+\subsection{Bảo mật (Security)}
+\begin{itemize}
+    \item \textbf{Xác thực an toàn:} Trang quản trị Admin yêu cầu đăng nhập với cơ chế mã hóa mật khẩu sử dụng các thuật toán băm (hashing) mạnh như \texttt{password\_hash()} trong PHP.
+    \item \textbf{Chống tấn công Web:} Triển khai các biện pháp phòng chống lỗi SQL Injection (thông qua Prepared Statements), Cross-Site Scripting (XSS) và đảm bảo an toàn cho Session.
+    \item \textbf{Phân quyền (Task 1 \& 2):} Đảm bảo chỉ những tài khoản có quyền Admin mới có thể thay đổi cấu hình hệ thống và nội dung doanh nghiệp.
+    \item \textbf{Bảo mật dữ liệu:} Mọi thông tin khách hàng gửi qua form Liên hệ phải được xử lý an toàn và không bị lộ lọt ra bên ngoài.
+\end{itemize}
+
+\subsection{Tính tương thích và Dễ sử dụng (Usability)}
+\begin{itemize}
+    \item \textbf{Thiết kế phản hồi (Responsive Design):} Giao diện website phải tương thích hoàn toàn với các kích thước màn hình khác nhau (Desktop, Tablet, Smartphone).
+    \item \textbf{Chuẩn hóa Frontend:} Mã nguồn HTML5/CSS3 phải đạt chuẩn W3C Validation để đảm bảo hiển thị đồng nhất trên các trình duyệt phổ biến như Chrome, Edge và Safari.
+    \item \textbf{Trải nghiệm Admin:} Giao diện quản trị \textbf{Srtdash} phải được cấu trúc logic, dễ hiểu để Admin có thể cập nhật nội dung Q\&A và Giới thiệu mà không cần kiến thức về lập trình.
+\end{itemize}
+
+\subsection{Tính khả dụng và Bảo trì (Availability \& Maintainability)}
+\begin{itemize}
+    \item \textbf{Thời gian hoạt động (Uptime):} Website cam kết duy trì trạng thái hoạt động 24/7 với tỷ lệ uptime tối thiểu đạt 99.5\% mỗi tháng.
+    \item \textbf{Cấu trúc mã nguồn:} Sử dụng mô hình MVC tự xây dựng giúp tách biệt rõ ràng giữa logic xử lý (PHP) và giao diện (HTML), tạo điều kiện thuận lợi cho việc bảo trì và nâng cấp các module sau này.
+    \item \textbf{Sao lưu dữ liệu:} Hệ thống cơ sở dữ liệu MySQL cần được sao lưu định kỳ để phòng ngừa rủi ro mất mát dữ liệu.
+\end{itemize}
+
+\subsection{Khả năng mở rộng (Scalability)}
+\begin{itemize}
+    \item Kiến trúc hệ thống cho phép dễ dàng tích hợp thêm các module mới như: Giỏ hàng, Cổng thanh toán trực tuyến hoặc hệ thống hỗ trợ khách hàng bằng AI trong tương lai.
+    \item Có khả năng nâng cấp cấu hình máy chủ để đáp ứng lưu lượng truy cập tăng cao trong các chiến dịch marketing của doanh nghiệp.
+\end{itemize}

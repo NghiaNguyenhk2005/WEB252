@@ -1,0 +1,152 @@
+\documentclass[a4paper, 16pt]{article}
+\usepackage{a4wide,amssymb,epsfig,latexsym,multicol,array,hhline,fancyhdr}
+\usepackage{vntex}
+\usepackage{amsmath}
+\usepackage{lastpage}
+\usepackage[lined,boxed,commentsnumbered]{algorithm2e}
+\usepackage{enumerate}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{fancybox}
+\usepackage{array}
+\usepackage{tabularx, caption}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{epsfig}
+\usepackage{courier}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows,snakes,backgrounds}
+\usepackage{hyperref}
+\usepackage{mdframed}
+\usepackage{tcolorbox}
+\usepackage{relsize}
+\usepackage{longtable}
+\hypersetup{urlcolor=blue,linkcolor=black,citecolor=black,colorlinks=true} 
+
+\newtheorem{definition}{{\bf Định nghĩa}}
+\newtheorem{theorem}{{\bf Theorem}}
+\newtheorem{property}{{\bf Property}}
+\newtheorem{proposition}{{\bf Proposition}}
+\newtheorem{corollary}[proposition]{{\bf Corollary}}
+\newtheorem{lemma}[proposition]{{\bf Lemma}}
+
+\AtBeginDocument{\renewcommand*\contentsname{Nội dung}}
+\setlength{\headheight}{40pt}
+\pagestyle{fancy}
+\fancyhead{} 
+\fancyhead[L]{
+ \begin{tabular}{rl}
+    \begin{picture}(25,15)(0,0)
+    \put(0,-8){\includegraphics[width=8mm, height=8mm]{image/hcmut.png}}
+   \end{picture}
+	\begin{tabular}{l}
+		\textbf{\bf \ttfamily University of Technology, Ho Chi Minh City}\\
+		\textbf{\bf \ttfamily Faculty of Computer Science and Engineering}
+	\end{tabular} 	
+ \end{tabular}
+}
+\fancyhead[R]{
+	\begin{tabular}{l}
+		\tiny \bf \\
+		\tiny \bf 
+	\end{tabular}  }
+\fancyfoot{} 
+\fancyfoot[R]{\scriptsize \ttfamily Page {\thepage}/\pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{3}
+\makeatletter
+\newcounter{subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection.\@alph\c@subsubsubsection}
+\newcommand\subsubsubsection{\@startsection{subsubsubsection}{4}{\z@}%
+                                     {-3.25ex\@plus-1ex \@minus-.2ex}%
+                                     {1.5ex \@plus.2ex}%
+                                     {\normalfont\normalsize\bfseries}}
+\newcommand*\l@subsubsubsection{\@dottedtocline{3}{10.0em}{4.1em}}
+\newcommand*{\subsubsubsectionmark}[1]{}
+\makeatother
+
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ \lstset{frame=tb,
+    backgroundcolor=\color{backcolour},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    captionpos=b,
+    numbers=left,
+    tabsize=2,
+ }
+
+\begin{document}
+\begin{titlepage}
+\begin{center}
+ĐẠI HỌC QUỐC GIA THÀNH PHỐ HỒ CHÍ MINH \\
+TRƯỜNG ĐẠI HỌC BÁCH KHOA \\
+KHOA KHOA HỌC VÀ KỸ THUẬT MÁY TÍNH
+\end{center}
+
+\vspace{1cm}
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=3cm]{image/hcmut.png}
+\end{center}
+\end{figure}
+
+\vspace{1cm}
+
+\begin{center}
+\begin{tabular}{c}
+\multicolumn{1}{l}{\textbf{{\Large LẬP TRÌNH WEB (CO3050)}}}\\
+~~\\
+\hline
+\\
+\multicolumn{1}{l}{\textbf{{\Large Báo cáo bài tập lớn}}}\\
+\\
+\textbf{{\Large WEBSITE DOANH NGHIỆP DỊCH VỤ \& THƯƠNG MẠI}}\\
+\\
+\\
+\hline
+\end{tabular}
+\end{center}
+\vspace{0.2cm}
+\begin{center}
+Giảng viên hướng dẫn:  Nguyễn Hữu Hiếu\\
+\vspace{0.7cm}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{STT} & \textbf{Họ tên SV} & \textbf{MSSV} & \textbf{Lớp} & \textbf{\% hoàn thành}\\
+\hline 
+{1} & {Nguyễn Đức Nghĩa}& {2312266} & {L02} & \multirow{1}{*}{100\%}\\
+\hline 
+{2} & {Nguyễn Hoàng Minh Hiếu} & {2252211} & {L02} & \multirow{1}{*}{100\%}\\
+\hline
+\end{tabular}
+
+\vfill
+Thành phố Hồ Chí Minh, tháng 5 năm 2026
+
+\end{center}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\input{Introduction}
+\input{Design_Direction}
+\input{Relevant_Stakeholders}
+\input{Functional_Requirements}
+\input{Non-functional_Requirements}
+\input{UCD_Scenario}
+\input{Diagram_UI}
+\input{Demo}
+
+\end{document}

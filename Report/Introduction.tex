@@ -1,0 +1,77 @@
+\section{Tổng quan về dự án}
+
+\subsection{Bối cảnh và tính cấp thiết}
+Trong kỷ nguyên số hiện nay, website không chỉ là bộ mặt thương hiệu mà còn là công cụ kinh doanh chiến lược của mỗi doanh nghiệp. Đối với các công ty công nghệ, một nền tảng web chuyên nghiệp giúp tối ưu hóa quy trình tương tác với khách hàng, cung cấp thông tin sản phẩm dịch vụ một cách minh bạch và tăng cường khả năng cạnh tranh trên thị trường. 
+
+Dự án này tập trung vào việc xây dựng hệ thống website cho doanh nghiệp sử dụng ngôn ngữ lập trình PHP thuần (version 7.0+) kết hợp với cơ sở dữ liệu MySQL, tuân thủ mô hình kiến trúc MVC (Model-View-Controller). Việc tự triển khai hệ thống mà không sử dụng các framework có sẵn (như Laravel hay WordPress) giúp nhóm nắm vững bản chất của luồng xử lý dữ liệu, tối ưu hóa hiệu suất hệ thống và đảm bảo tính bảo mật ngay từ cấp độ mã nguồn.
+
+\subsection{Mục đích và mục tiêu dự án}
+
+\subsubsection{Mục đích dự án:}
+Website doanh nghiệp được xây dựng nhằm:
+\begin{itemize}
+    \item Thiết lập kênh truyền thông chính thức, giới thiệu năng lực và giá trị cốt lõi của công ty đến đối tác và khách hàng.
+    \item Cung cấp hệ thống quản trị nội dung (CMS) tự xây dựng để doanh nghiệp chủ động cập nhật thông tin sản phẩm, tin tức và giải đáp thắc mắc của khách hàng (Q\&A).
+    \item Tối ưu hóa trải nghiệm người dùng (UX) thông qua giao diện phản hồi (Responsive Design) và tích hợp các tiêu chuẩn SEO cơ bản.
+    \item Đảm bảo an toàn dữ liệu thông qua việc kiểm soát chặt chẽ các lỗ hổng bảo mật web phổ biến.
+\end{itemize}
+
+\subsubsection{Mục tiêu dự án:}
+Hệ thống được thiết kế để đạt được các mục tiêu kỹ thuật và vận hành sau:
+
+\renewcommand{\arraystretch}{1.4}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|p{9.5cm}|}
+\hline
+\textbf{Nhóm mục tiêu} & \textbf{Mô tả chi tiết} \\
+\hline
+Quản trị giao diện chính (Task 1) & 
+\- Thiết kế trang chủ chuyên nghiệp, hiển thị thông tin tổng quan, dự án tiêu biểu.\\
+& \- Xây dựng trang Liên hệ tích hợp bản đồ và form gửi yêu cầu trực tuyến. \\
+\hline
+Quản lý nội dung doanh nghiệp (Task 2) & 
+\- Xây dựng module Giới thiệu (About Us) về lịch sử, tầm nhìn và đội ngũ.\\
+& \- Thiết lập hệ thống Câu hỏi thường gặp (Q\&A) giúp giảm tải cho bộ phận hỗ trợ. \\
+\hline
+Quản trị hệ thống (Admin) & 
+\- Tích hợp template \textbf{Srtdash} để quản lý toàn bộ cơ sở dữ liệu.\\
+& \- Quản lý danh sách liên hệ khách hàng, cập nhật nội dung trang Giới thiệu và Q\&A. \\
+\hline
+Kỹ thuật và Bảo mật & 
+\- Sử dụng PHP thuần, không Framework, đảm bảo mã nguồn đạt chuẩn W3C.\\
+& \- Thực hiện validation dữ liệu phía Client (JS) và Server (PHP). \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Phạm vi dự án}
+
+\subsubsection{Chức năng cốt lõi (Trọng tâm Task 1 \& 2)}
+
+\begin{enumerate}
+    \item \textbf{Trang chủ và Liên hệ (Thành viên 1)}
+    \begin{itemize}
+        \item Thiết kế giao diện Homepage: Banner động, giới thiệu dịch vụ chính, các dự án nổi bật.
+        \item Trang Liên hệ: Form nhận thông tin từ khách hàng, bản đồ Google Maps, thông tin văn phòng.
+        \item Quản lý thông tin chung: Chỉnh sửa Logo, số điện thoại, email, địa chỉ công ty trên toàn trang.
+        \item Quản lý phản hồi khách hàng: Tiếp nhận, xem và xóa các yêu cầu liên hệ từ người dùng.
+    \end{itemize}
+
+    \item \textbf{Giới thiệu và Giải đáp - Q\&A (Thành viên 2)}
+    \begin{itemize}
+        \item Trang Giới thiệu: Trình bày chi tiết về giá trị cốt lõi, sơ đồ tổ chức và văn hóa doanh nghiệp.
+        \item Module Q\&A: Hiển thị danh sách các câu hỏi thường gặp theo phân loại chủ đề.
+        \item Quản trị nội dung: Thêm, sửa, xóa các bài viết giới thiệu và các bộ câu hỏi FAQ trong bảng điều khiển Admin.
+    \end{itemize}
+
+    \item \textbf{Hệ thống quản trị (Admin Dashboard)}
+    \begin{itemize}
+        \item Sử dụng template \textbf{Srtdash} làm giao diện chính cho quản trị viên.
+        \item Chức năng đăng nhập/đăng xuất bảo mật cho Admin.
+        \item Thống kê cơ bản về lượt liên hệ và số lượng nội dung trên website.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Các chức năng phối hợp khác}
+Hệ thống cũng bao gồm các module bổ trợ được thực hiện bởi các thành viên khác trong nhóm như: Quản lý sản phẩm/dịch vụ, Giỏ hàng đơn giản, Tin tức doanh nghiệp và quản lý bình luận của thành viên.
