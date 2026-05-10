@@ -1,80 +1,4 @@
 <?php
-
-/**
- * Xử lý Đăng nhập, Đăng ký và Quên mật khẩu
- */
-class AuthController {
-    private $auth;
-    private $conn;
-
-    public function __construct($conn) {
-        $this->conn = $conn;
-        $this->auth = new AuthModel($this->conn);
-    }
-
-    public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
-            $password = $_POST['password'] ?? '';
-
-            $user = $this->auth->findByEmail($email);
-            if ($user && password_verify($password, $user['password'])) {
-                $_SESSION['user'] = $user;
-                header("Location: index.php");
-                exit;
-            }
-            $error = "Sai tài khoản hoặc mật khẩu";
-        }
-        require_once "views/client/auth/login.php";
-    }
-
-    public function register() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = htmlspecialchars(trim($_POST['username'] ?? ''));
-            $email = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
-            $password = $_POST['password'] ?? '';
-
-            if ($this->auth->findByEmail($email)) {
-                $error = "Email này đã được sử dụng.";
-            } else {
-                $this->auth->createUser([
-                    "username" => $username,
-                    "email" => $email,
-                    "password" => $password
-                ]);
-                header("Location: index.php?url=login&registered=1");
-                exit;
-            }
-        }
-        require_once "views/client/auth/register.php";
-    }
-
-    public function forgotPassword() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $user = $this->auth->verifyUserForReset($_POST['username'], $_POST['email']);
-            if ($user) {
-                $_SESSION['reset_user_id'] = $user['id'];
-                header("Location: index.php?url=reset-password");
-                exit;
-            }
-            $error = "Thông tin không chính xác.";
-        }
-        require_once "views/client/auth/forgot_password.php";
-    }
-
-    public function resetPassword() {
-        if (!isset($_SESSION['reset_user_id'])) {
-            header("Location: index.php?url=forgot-password");
-            exit;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->auth->updatePassword($_SESSION['reset_user_id'], $_POST['password']);
-            unset($_SESSION['reset_user_id']);
-            header("Location: index.php?url=login&reset_success=1");
-            exit;
-        }
-        require_once "views/client/auth/reset_password.php";
 class AuthController extends BaseController {
     private $authModel;
 
@@ -129,22 +53,13 @@ class AuthController extends BaseController {
             if (empty($email) || empty($password)) {
                 $error = 'Vui lòng nhập email và mật khẩu.';
             } else {
+                // findByEmail now returns role via JOIN
                 $user = $this->authModel->findByEmail($email);
                 if ($user && password_verify($password, $user['password'])) {
                     if ($user['status'] == 0) {
                         $error = 'Tài khoản của bạn đã bị khoá.';
                     } else {
-                        $uid        = (int)$user['id'];
-                        $conn       = $this->authModel->getConn();
-                        $roleResult = $conn->query(
-                            "SELECT r.name FROM roles r
-                             INNER JOIN user_roles ur ON r.id = ur.role_id
-                             WHERE ur.user_id = $uid LIMIT 1"
-                        );
-                        $roleRow = $roleResult ? $roleResult->fetch_assoc() : null;
-                        $role    = $roleRow['name'] ?? 'member';
-
-                        // Store only safe fields — never store password hash in session
+                        $role = $user['role'] ?? 'member';
                         $_SESSION['user'] = [
                             'id'       => $user['id'],
                             'username' => $user['username'],
@@ -153,7 +68,6 @@ class AuthController extends BaseController {
                             'status'   => $user['status'],
                             'role'     => $role,
                         ];
-
                         $this->redirect($role === 'admin' ? '/admin/contacts' : '/');
                     }
                 } else {
@@ -170,9 +84,45 @@ class AuthController extends BaseController {
 
     public function logout() {
         session_destroy();
-        header("Location: index.php?url=login");
-        exit;
         $this->redirect('/login');
+    }
+
+    public function forgotPassword() {
+        $error = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
+            $user = $this->authModel->verifyUserForReset(
+                $_POST['username'] ?? '',
+                $_POST['email']    ?? ''
+            );
+            if ($user) {
+                $_SESSION['reset_user_id'] = $user['id'];
+                $this->redirect('/reset-password');
+            }
+            $error = 'Thông tin không chính xác.';
+        }
+        global $globalSettings;
+        $this->view('client/auth/forgot_password', [
+            'globalSettings' => $globalSettings,
+            'error'          => $error,
+        ]);
+    }
+
+    public function resetPasswordPage() {
+        if (!isset($_SESSION['reset_user_id'])) {
+            $this->redirect('/forgot-password');
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->verifyCsrf();
+            $this->authModel->updatePassword(
+                $_SESSION['reset_user_id'],
+                $_POST['password'] ?? ''
+            );
+            unset($_SESSION['reset_user_id']);
+            $this->redirect('/login?reset_success=1');
+        }
+        global $globalSettings;
+        $this->view('client/auth/reset_password', ['globalSettings' => $globalSettings]);
     }
 
     public function profile() {
@@ -212,11 +162,10 @@ class AuthController extends BaseController {
                     $user    = $this->authModel->findById((int)$_SESSION['user']['id']);
                     $success = 'Cập nhật thông tin thành công.';
                 }
-
             } elseif ($action === 'change_password') {
                 $current = $_POST['current_password'] ?? '';
-                $new     = $_POST['new_password'] ?? '';
-                $confirm = $_POST['confirm_password'] ?? '';
+                $new     = $_POST['new_password']     ?? '';
+                $confirm = $_POST['confirm_password']  ?? '';
 
                 if (!password_verify($current, $user['password'])) {
                     $error = 'Mật khẩu hiện tại không đúng.';

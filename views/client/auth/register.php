@@ -1,32 +1,3 @@
-<?php require_once 'views/client/components/header.php'; ?>
-
-<div class="container my-5 py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4">
-                <div class="card-body">
-                    <h2 class="fw-bold mb-4 text-center">Đăng ký</h2>
-                    
-                    <?php if (isset($error)): ?>
-                        <div class="alert alert-danger border-0 rounded-pill small py-2 text-center mb-4"><?= $error ?></div>
-                    <?php endif; ?>
-
-                    <form action="index.php?url=register" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label">Tên đăng nhập</label>
-                            <input type="text" name="username" class="form-control rounded-pill px-3" placeholder="user123" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control rounded-pill px-3" placeholder="email@example.com" required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Mật khẩu</label>
-                            <input type="password" name="password" class="form-control rounded-pill px-3" placeholder="********" required>
-                        </div>
-                        <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2 mb-3">Đăng ký</button>
-                        <p class="text-center text-muted mb-0">Đã có tài khoản? <a href="index.php?url=login" class="text-primary text-decoration-none">Đăng nhập</a></p>
-                    </form>
 <?php include __DIR__ . '/../components/header.php'; ?>
 
 <section class="py-5" style="min-height:80vh;display:flex;align-items:center;">
@@ -36,7 +7,8 @@
                 <div class="card border-0 shadow-lg rounded-4 p-2">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width:56px;height:56px;">
+                            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3"
+                                 style="width:56px;height:56px;">
                                 <i class="bi bi-person-plus-fill text-success fs-4"></i>
                             </div>
                             <h4 class="fw-bold mb-1">Tạo tài khoản</h4>
@@ -98,7 +70,7 @@
                                            class="form-control border-start-0 ps-0"
                                            placeholder="Nhập lại mật khẩu" required>
                                 </div>
-                                <small id="pwdMatch" class="d-none text-danger fw-semibold">
+                                <small id="pwdMatch" class="d-none text-danger fw-semibold mt-1 d-block">
                                     <i class="bi bi-x-circle me-1"></i>Mật khẩu không khớp
                                 </small>
                             </div>
@@ -116,9 +88,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<?php require_once 'views/client/components/footer.php'; ?>
 </section>
 
 <script>
@@ -149,20 +118,16 @@ document.getElementById('regPwd').addEventListener('input', function() {
         {w:'100%',cls:'bg-success',txt:'Rất mạnh'},
     ];
     const l = levels[Math.min(score - 1, 4)] || levels[0];
-    fill.style.width = l.w;
-    fill.className   = 'progress-bar ' + l.cls;
-    label.textContent = l.txt;
+    fill.style.width = l.w; fill.className = 'progress-bar ' + l.cls; label.textContent = l.txt;
 });
 document.getElementById('confirmPwd').addEventListener('input', function() {
     const match = document.getElementById('pwdMatch');
     (this.value && this.value !== document.getElementById('regPwd').value)
-        ? match.classList.remove('d-none')
-        : match.classList.add('d-none');
+        ? match.classList.remove('d-none') : match.classList.add('d-none');
 });
 document.getElementById('regForm').addEventListener('submit', function(e) {
     if (document.getElementById('regPwd').value !== document.getElementById('confirmPwd').value) {
-        e.preventDefault();
-        document.getElementById('pwdMatch').classList.remove('d-none');
+        e.preventDefault(); document.getElementById('pwdMatch').classList.remove('d-none');
     }
 });
 </script>

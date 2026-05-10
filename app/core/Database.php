@@ -1,26 +1,27 @@
 <?php
-
-/**
- * Lớp xử lý kết nối cơ sở dữ liệu MySQL
- */
-class Database
-{
+class Database {
     private $host;
     private $username;
     private $password;
     private $database;
     public $conn;
 
-    public function __construct()
-    {
-        // Nạp tham số kết nối từ file cấu hình
-        $config = require_once __DIR__ . '/../../config/database.php';
-        $this->host = $config['db']['host'];
-        $this->username = $config['db']['username'];
-        $this->password = $config['db']['password'];
-        $this->database = $config['db']['database'];
+    public function __construct() {
+        // Use config file if it exists, otherwise fall back to defaults
+        $configFile = __DIR__ . '/../../config/database.php';
+        if (file_exists($configFile)) {
+            $config          = require $configFile;
+            $this->host      = $config['db']['host']     ?? 'localhost';
+            $this->username  = $config['db']['username']  ?? 'root';
+            $this->password  = $config['db']['password']  ?? '';
+            $this->database  = $config['db']['database']  ?? 'TaSS';
+        } else {
+            $this->host      = 'localhost';
+            $this->username  = 'root';
+            $this->password  = '';
+            $this->database  = 'TaSS';
+        }
 
-        // Khởi tạo đối tượng mysqli
         $this->conn = new mysqli(
             $this->host,
             $this->username,
@@ -28,20 +29,14 @@ class Database
             $this->database
         );
 
-        // Kiểm tra lỗi kết nối
         if ($this->conn->connect_error) {
             die("Kết nối thất bại: " . $this->conn->connect_error);
         }
 
-        // Thiết lập bảng mã UTF-8
         $this->conn->set_charset("utf8");
     }
 
-    /**
-     * Trả về đối tượng kết nối hiện tại
-     */
-    public function getConnection()
-    {
+    public function getConnection() {
         return $this->conn;
     }
 }

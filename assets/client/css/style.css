@@ -1,35 +1,14 @@
 /* --- BASE STYLES --- */
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
 
-/* --- HEADER & NAVIGATION --- */
-.glass-nav.sticky-top { 
-    background: rgba(255, 255, 255, 0.85) !important; 
-    backdrop-filter: blur(12px); 
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.3); 
-    z-index: 2000 !important; 
-    top: 0 !important; /* Always at very top */
+/* --- NAVIGATION --- */
 .glass-nav {
     background: rgba(255, 255, 255, 0.85) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255,255,255,0.3);
+    z-index: 2000 !important;
 }
-
-/* --- STICKY SIDEBARS (CART/CHECKOUT) --- */
-.card.sticky-top {
-    top: 100px !important; /* Offset to show below navbar */
-    z-index: 1000 !important;
-}
-
-@media (max-width: 991.98px) {
-    .sticky-top-mobile-off { 
-        position: relative !important; 
-        top: 0 !important; 
-    }
-}
-.item-row img { transition: transform 0.3s ease; }
-.item-row:hover img { transform: scale(1.05); }
 
 /* --- BUTTONS & TEXT EFFECTS --- */
 .text-gradient {
@@ -48,7 +27,7 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     color: white;
 }
 
-/* --- CARDS & BLOCKS --- */
+/* --- CARDS --- */
 .hover-lift {
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     border-radius: 16px;
@@ -84,7 +63,6 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     object-position: center;
     opacity: 0.55;
 }
-/* Ensure caption sits above the image */
 .carousel-item .container {
     position: relative;
     z-index: 2;
@@ -98,14 +76,14 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     padding: 0;
 }
 
-/* --- SOCIAL PROOF (ĐỐI TÁC) --- */
+/* --- PARTNERS --- */
 .partner-logo {
     opacity: 0.45; filter: grayscale(100%);
     transition: all 0.3s ease; height: 36px;
 }
 .partner-logo:hover { opacity: 1; filter: grayscale(0%); }
 
-/* --- PRICING (BẢNG GIÁ) --- */
+/* --- PRICING --- */
 .pricing-card {
     border: 1px solid #e9ecef; border-radius: 16px;
     transition: all 0.3s ease;
@@ -129,28 +107,29 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     white-space: nowrap;
 }
 
-/* --- CTA SECTION --- */
+/* --- CTA --- */
 .cta-section {
     background: linear-gradient(135deg, #0d6efd, #6610f2);
     border-radius: 24px; padding: 60px 40px;
     color: white; text-align: center;
 }
 
-/* --- FOOTER EFFECTS --- */
+/* --- CART/CHECKOUT STICKY --- */
+.card.sticky-top { top: 100px !important; z-index: 1000 !important; }
+.item-row img { transition: transform 0.3s ease; }
+.item-row:hover img { transform: scale(1.05); }
 .hover-white:hover { color: #fff !important; }
 
-/* --- MOBILE OPTIMIZATIONS --- */
+/* --- RESPONSIVE --- */
+@media (max-width: 991.98px) {
+    .sticky-top-mobile-off { position: relative !important; top: 0 !important; }
+}
 @media (max-width: 575.98px) {
     .btn { padding: 10px 20px; font-size: 0.9rem; }
-    .input-group { width: 100% !important; }
-    #ajax-search-input { width: 100% !important; }
     .glass-nav .container { padding: 0 15px; }
 }
 
-/* --- FIX STICKY OVERLAP --- */
-.glass-nav.sticky-top { z-index: 2000 !important; }
-.sticky-top-mobile-off { z-index: 1000 !important; }
-/* --- CUSTOM SCROLLBAR --- */
+/* --- SCROLLBAR --- */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }
 ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
