@@ -81,16 +81,32 @@
     </button>
 </header>
 
-<!-- 2. ĐỐI TÁC -->
+<!-- 2. ĐỐI TÁC - BOOTSTRAP GRID VERSION -->
 <section class="py-4 border-bottom bg-white">
-    <div class="container text-center">
-        <p class="text-muted small fw-bold mb-4 text-uppercase" data-aos="fade-up">Được tin dùng bởi 500+ doanh nghiệp</p>
-        <div class="row justify-content-center align-items-center opacity-75" data-aos="fade-up" data-aos-delay="100">
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" class="partner-logo" alt="Google"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" class="partner-logo" alt="Microsoft"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" class="partner-logo" alt="Amazon"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg" class="partner-logo" alt="Cisco"></div>
-            <div class="col-4 col-md-2 mb-3"><img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" class="partner-logo" alt="IBM"></div>
+    <div class="container">
+        <p class="text-muted small fw-bold mb-4 text-uppercase text-center" data-aos="fade-up">Được tin dùng bởi 500+ doanh nghiệp</p>
+        
+        <div class="row justify-content-center align-items-center g-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-6 col-sm-4 col-md-2 text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" 
+                     class="img-fluid partner-logo" alt="Google" style="max-height: 45px;">
+            </div>
+            <div class="col-6 col-sm-4 col-md-2 text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg" 
+                     class="img-fluid partner-logo" alt="Microsoft" style="max-height: 45px;">
+            </div>
+            <div class="col-6 col-sm-4 col-md-2 text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" 
+                     class="img-fluid partner-logo" alt="Amazon" style="max-height: 45px;">
+            </div>
+            <div class="col-6 col-sm-4 col-md-2 text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg" 
+                     class="img-fluid partner-logo" alt="Cisco" style="max-height: 45px;">
+            </div>
+            <div class="col-6 col-sm-4 col-md-2 text-center">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/IBM_logo.svg" 
+                     class="img-fluid partner-logo" alt="IBM" style="max-height: 45px;">
+            </div>
         </div>
     </div>
 </section>

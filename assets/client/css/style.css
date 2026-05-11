@@ -128,7 +128,25 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     .btn { padding: 10px 20px; font-size: 0.9rem; }
     .glass-nav .container { padding: 0 15px; }
 }
+.partner-logo {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    width: auto;
+    max-width: 100%;
+}
 
+.partner-logo:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+@media (max-width: 576px) {
+    .partner-logo {
+        max-height: 30px !important;
+    }
+}
 /* --- SCROLLBAR --- */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }

@@ -106,7 +106,12 @@ switch (true) {
     case preg_match('/^news\/([a-zA-Z0-9-]+)$/', $url, $m):
         (new PostController($conn))->show($m[1]);
         break;
-
+    case $url === 'faqs':
+        (new FaqController($conn))->index();
+        break;
+    case $url === 'faqs/submit':
+        (new FaqController($conn))->submit();
+        break;
     // ── ADMIN: FAQ ROUTES (HIDDEN ID) ────────────────────────────────
     case $url === 'admin/faqs':
         (new AdminFaqController($conn))->index();

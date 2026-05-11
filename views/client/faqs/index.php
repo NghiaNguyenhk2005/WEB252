@@ -54,8 +54,7 @@
                         <i class="bi bi-check-circle-fill me-2"></i> Câu hỏi của bạn đã được gửi thành công!
                     </div>
                 <?php endif; ?>
-
-                <form action="index.php?url=faqs/submit" method="POST" class="text-start">
+                <form action="<?= BASE_PATH ?>/faqs/submit" method="POST" class="text-start">
                     <div class="mb-4">
                         <label class="form-label fw-bold">Câu hỏi của bạn</label>
                         <textarea name="question" class="form-control rounded-4 p-3" rows="4" placeholder="Nhập nội dung câu hỏi tại đây..." required></textarea>

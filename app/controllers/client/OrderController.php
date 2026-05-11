@@ -27,21 +27,42 @@ class OrderController {
      * Xem chi tiết một đơn hàng cụ thể
      */
     public function detail($id) {
-        $order = $this->orderModel->where('id', $id)->where('user_id', $_SESSION['user']['id'])->first();
-        if (!$order) {
-            header("Location: index.php?url=orders");
+        $orderId = (int)$id;
+        
+        if (!$orderId) {
+            header("Location: " . BASE_PATH . "/orders");
             exit;
         }
-        $items = $this->orderItemModel->getItemsByOrderId($id);
-        require_once "views/client/orders/detail.php";
-    }
-
-    /**
-     * Hiển thị thông báo sau khi đặt hàng thành công
-     */
-    public function success() {
-        $id = $_GET['id'] ?? 0;
-        $order = $this->orderModel->where('id', $id)->where('user_id', $_SESSION['user']['id'])->first();
-        require_once "views/client/orders/success.php";
+        
+        // Get order details - matches your DB structure
+        $stmt = $this->conn->prepare("
+            SELECT o.* 
+            FROM orders o
+            WHERE o.id = ? 
+            AND (o.user_id = ? OR ? = 0)
+        ");
+        $userId = $_SESSION['user']['id'] ?? 0;
+        $stmt->bind_param("iii", $orderId, $userId, $userId);
+        $stmt->execute();
+        $order = $stmt->get_result()->fetch_assoc();
+        
+        if (!$order) {
+            $_SESSION['error'] = 'Không tìm thấy đơn hàng';
+            header("Location: " . BASE_PATH . "/orders");
+            exit;
+        }
+        
+        // Get order items with product info (including image)
+        $stmt = $this->conn->prepare("
+            SELECT oi.*, p.name, p.image, p.slug
+            FROM order_items oi
+            LEFT JOIN products p ON oi.product_id = p.id
+            WHERE oi.order_id = ?
+        ");
+        $stmt->bind_param("i", $orderId);
+        $stmt->execute();
+        $orderItems = $stmt->get_result();
+        
+        require_once __DIR__ . '/../../../views/client/orders/detail.php';
     }
 }
