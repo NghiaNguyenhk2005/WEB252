@@ -340,13 +340,13 @@
         <div class="row g-4 text-center">
             <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="0">
                 <div class="stats-card">
-                    <div class="stats-number"><?= htmlspecialchars($aboutContent['stat_customers'] ?? '500') ?><span style="font-size: 32px;">+</span></div>
+                    <div class="stats-number"><?= htmlspecialchars($aboutContent['stat_customers'] ?? '500') ?><span style="font-size: 32px;"></span></div>
                     <div class="stats-label">Doanh nghiệp tin dùng</div>
                 </div>
             </div>
             <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
                 <div class="stats-card">
-                    <div class="stats-number"><?= htmlspecialchars($aboutContent['stat_experts'] ?? '50') ?><span style="font-size: 32px;">+</span></div>
+                    <div class="stats-number"><?= htmlspecialchars($aboutContent['stat_experts'] ?? '50') ?><span style="font-size: 32px;"></span></div>
                     <div class="stats-label">Chuyên gia công nghệ</div>
                 </div>
             </div>
@@ -358,7 +358,7 @@
             </div>
             <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
                 <div class="stats-card">
-                    <div class="stats-number"><?= htmlspecialchars($aboutContent['stat_uptime'] ?? '99.9') ?><span style="font-size: 32px;">%</span></div>
+                    <div class="stats-number"><?= htmlspecialchars($aboutContent['stat_uptime'] ?? '99.9') ?><span style="font-size: 32px;"></span></div>
                     <div class="stats-label">Uptime đảm bảo</div>
                 </div>
             </div>
