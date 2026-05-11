@@ -327,7 +327,11 @@ switch (true) {
     case $url === 'admin/services/delete':
         (new AdminServiceController($conn))->delete((int)($_GET['id'] ?? 0));
         break;
-
+    // Inside your routing logic
+    case $url === 'admin/orders/detail':
+        $controller = new AdminOrderController($conn);
+        $controller->detail();
+        break;
     // ── 404 ──────────────────────────────────────────────────
     default:
         http_response_code(404);

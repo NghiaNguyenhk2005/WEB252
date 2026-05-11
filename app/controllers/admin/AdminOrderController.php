@@ -38,4 +38,40 @@ class AdminOrderController {
             exit;
         }
     }
+    public function detail() {
+        // 1. Force clear any previous PHP warnings/errors from the buffer
+        if (ob_get_length()) ob_clean();
+
+        header('Content-Type: application/json');
+
+        try {
+            $id = $_GET['id'] ?? 0;
+
+            // 2. FETCH ORDER
+            $order = $this->orderModel->find($id);
+            if (!$order) {
+                echo json_encode(['error' => 'Order not found']);
+                exit;
+            }
+
+            // 3. LOAD MODEL (Fixes the "<br /> <b>" error if class wasn't found)
+            if (!class_exists('OrderItemModel')) {
+                require_once "models/OrderItemModel.php"; // Check your actual path!
+            }
+
+            $orderItemModel = new OrderItemModel($this->conn);
+            $items = $orderItemModel->getItemsByOrderId($id);
+
+            // 4. RETURN CLEAN JSON
+            echo json_encode([
+                'order' => $order,
+                'items' => $items
+            ]);
+
+        } catch (Exception $e) {
+            // If something crashes, send the error as a JSON string
+            echo json_encode(['error' => $e->getMessage()]);
+        }
+        exit; // Stop everything here to prevent other HTML from leaking in
+    }
 }

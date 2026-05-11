@@ -317,10 +317,6 @@ if (!function_exists('srtActive')) {
         <a href="<?= $bp ?>/admin/faqs" class="<?= srtActive('admin/faqs') ?>">
             <i class="fa-solid fa-circle-question"></i> FAQ
         </a>
-        <a href="<?= $bp ?>/admin/sliders" class="<?= srtActive('admin/sliders') ?>">
-            <i class="fa-solid fa-images"></i> Sliders
-        </a>
-
         <div class="srt-nav-label">Thương mại</div>
         <a href="<?= $bp ?>/admin/orders" class="<?= srtActive('admin/orders') ?>">
             <i class="fa-solid fa-receipt"></i> Đơn hàng

@@ -1,48 +1,75 @@
-<?php require_once 'views/admin/partials/header.php'; ?>
+<?php include __DIR__ . '/../partials/header.php'; ?>
 
-<div class="main-content-inner">
-    <div class="row">
-        <div class="col-12 mt-5">
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-md-5">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="header-title mb-0">Quản lý Dịch vụ</h4>
-                        <a href="index.php?url=admin/services/create" class="btn btn-primary rounded-pill px-4">Thêm dịch vụ mới</a>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover text-center align-middle">
-                            <thead class="bg-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Icon</th>
-                                    <th>Tên dịch vụ</th>
-                                    <th>Mô tả ngắn</th>
-                                    <th>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (isset($services) && is_object($services) && $services->num_rows > 0): ?>
-                                    <?php while($s = $services->fetch_assoc()): ?>
-                                        <tr>
-                                            <td><?= $s['id'] ?></td>
-                                            <td><i class="bi <?= $s['icon'] ?> fs-4 text-primary"></i></td>
-                                            <td class="fw-bold"><?= htmlspecialchars($s['name']) ?></td>
-                                            <td class="text-left small" style="max-width: 300px;"><?= htmlspecialchars($s['short_description']) ?></td>
-                                            <td>
-                                                <a href="index.php?url=admin/services/delete&id=<?= $s['id'] ?>" class="text-danger" onclick="return confirm('Xóa dịch vụ này?')"><i class="ti-trash"></i></a>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
-                                    <tr><td colspan="5" class="py-5 text-muted">Chưa có dịch vụ nào</td></tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="srt-page-header">
+    <div>
+        <h4><i class="fa-solid fa-handshake me-2" style="color:var(--accent);"></i>Quản lý Dịch vụ</h4>
+    </div>
+    <a href="<?= BASE_PATH ?>/admin/services/create" class="btn-srt-primary text-decoration-none">
+        <i class="fa-solid fa-plus"></i> Thêm dịch vụ
+    </a>
+</div>
+
+<div class="srt-card">
+    <div class="srt-card-header">
+        <span><i class="fa-solid fa-list me-2"></i>Danh sách dịch vụ</span>
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="srt-table">
+            <thead>
+                <tr>
+                    <th style="width:50px;">#</th>
+                    <th style="width:60px;text-align:center;">Icon</th>
+                    <th>Tên dịch vụ</th>
+                    <th>Mô tả ngắn</th>
+                    <th style="width:90px;">Trạng thái</th>
+                    <th style="width:120px;text-align:center;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php if (isset($services) && is_object($services) && $services->num_rows > 0):
+                while ($s = $services->fetch_assoc()): ?>
+                <tr>
+                    <td style="color:#aaa;"><?= $s['id'] ?></td>
+                    <td style="text-align:center;">
+                        <i class="bi <?= htmlspecialchars($s['icon'] ?? 'bi-gear') ?> fs-5 text-primary"></i>
+                    </td>
+                    <td class="fw-semibold"><?= htmlspecialchars($s['name']) ?></td>
+                    <td style="font-size:.83rem;color:#666;max-width:260px;">
+                        <?= htmlspecialchars(mb_substr($s['short_description'] ?? '', 0, 80)) ?><?= mb_strlen($s['short_description'] ?? '') > 80 ? '…' : '' ?>
+                    </td>
+                    <td>
+                        <?= ($s['status'] ?? 1) == 1
+                            ? '<span class="badge-active">Hiện</span>'
+                            : '<span class="badge-banned">Ẩn</span>' ?>
+                    </td>
+                    <td style="text-align:center;">
+                        <div class="srt-actions" style="justify-content:center;">
+                            <a href="<?= BASE_PATH ?>/admin/services/edit/<?= $s['id'] ?>"
+                               class="btn-srt-warning btn-srt-sm text-decoration-none" title="Chỉnh sửa">
+                                <i class="fa-solid fa-pen"></i>
+                            </a>
+                            <form method="POST"
+                                  action="<?= BASE_PATH ?>/admin/services/delete/<?= $s['id'] ?>"
+                                  onsubmit="return confirm('Xoá dịch vụ «<?= addslashes(htmlspecialchars($s['name'])) ?>»?')">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn-srt-danger btn-srt-sm" title="Xoá">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            <?php endwhile; else: ?>
+                <tr>
+                    <td colspan="6" class="text-center py-5" style="color:#aaa;">
+                        <i class="fa-solid fa-handshake fa-2x mb-2 d-block" style="opacity:.3;"></i>
+                        Chưa có dịch vụ nào.
+                    </td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<?php require_once 'views/admin/partials/footer.php'; ?>
+<?php include __DIR__ . '/../partials/footer.php'; ?>

@@ -310,9 +310,9 @@ if ($db_conn) {
             $quickLinks = [
                 ['/admin/products/create', 'fa-plus',           'Thêm sản phẩm',  'primary'],
                 ['/admin/posts/create',    'fa-file-pen',        'Đăng bài viết',  'primary'],
-                ['/admin/settings',        'fa-gear',            'Cài đặt',        'secondary'],
+                ['/admin/settings',        'fa-gear',            'Cài đặt và quản lí slider',        'secondary'],
                 ['/admin/users',           'fa-users',           'Người dùng',     'secondary'],
-                ['/admin/sliders',         'fa-images',          'Quản lý slider', 'secondary'],
+                //['/admin/sliders',         'fa-images',          'Quản lý slider', 'secondary'],
                 ['/admin/faqs',            'fa-circle-question', 'FAQ',            'secondary'],
             ];
             foreach ($quickLinks as [$href, $icon, $label, $type]):
