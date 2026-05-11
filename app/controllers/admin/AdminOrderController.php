@@ -1,8 +1,4 @@
 <?php
-
-/**
- * Quản lý Đơn hàng phía Admin
- */
 class AdminOrderController {
     private $conn;
     private $orderModel;
@@ -14,64 +10,130 @@ class AdminOrderController {
     }
 
     public function index() {
-        // Cấu hình phân trang đơn hàng
-        $limit = 10;
-        $page = $_GET['page'] ?? 1;
+        global $globalSettings;
+        $limit  = 10;
+        $page   = max(1, (int)($_GET['page'] ?? 1));
         $offset = ($page - 1) * $limit;
+        $total  = $this->orderModel->count();
+        $pages  = (int)ceil($total / $limit);
 
-        $totalItems = $this->orderModel->count();
-        $orders = $this->orderModel->orderBy('created_at', 'DESC')->limit($limit, $offset)->get();
-        
-        $totalPages = ceil($totalItems / $limit);
-        require_once "views/admin/orders/index.php";
+        // JOIN users to get username
+        $sql = "SELECT o.*, u.username
+                FROM orders o
+                LEFT JOIN users u ON o.user_id = u.id
+                WHERE o.deleted_at IS NULL
+                ORDER BY o.created_at DESC
+                LIMIT ? OFFSET ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        $orders = $stmt->get_result();
+
+        require_once __DIR__ . '/../../../views/admin/orders/index.php';
     }
 
-    /**
-     * Cập nhật trạng thái xử lý đơn hàng
-     */
     public function updateStatus() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'];
-            $status = $_POST['status'];
-            $this->orderModel->update($id, ['status' => $status]);
-            header("Location: index.php?url=admin/orders");
+            $id     = (int)($_POST['id'] ?? 0);
+            $status = $_POST['status'] ?? '';
+            $allowed = ['pending', 'paid', 'shipping', 'completed', 'cancelled'];
+            if ($id && in_array($status, $allowed)) {
+                $this->orderModel->update($id, ['status' => $status]);
+            }
+        }
+        // FIX: was "index.php?url=admin/orders" → redirected to homepage
+        header("Location: " . BASE_PATH . "/admin/orders?success=1");
+        exit;
+    }
+
+public function detail() {
+
+    // CLEAR BUFFER
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    try {
+
+        $id = (int)($_GET['id'] ?? 0);
+
+        if (!$id) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Invalid order ID'
+            ]);
             exit;
         }
-    }
-    public function detail() {
-        // 1. Force clear any previous PHP warnings/errors from the buffer
-        if (ob_get_length()) ob_clean();
 
-        header('Content-Type: application/json');
+        // GET ORDER
+        $order = $this->orderModel
+            ->where('id', $id)
+            ->first();
 
-        try {
-            $id = $_GET['id'] ?? 0;
-
-            // 2. FETCH ORDER
-            $order = $this->orderModel->find($id);
-            if (!$order) {
-                echo json_encode(['error' => 'Order not found']);
-                exit;
-            }
-
-            // 3. LOAD MODEL (Fixes the "<br /> <b>" error if class wasn't found)
-            if (!class_exists('OrderItemModel')) {
-                require_once "models/OrderItemModel.php"; // Check your actual path!
-            }
-
-            $orderItemModel = new OrderItemModel($this->conn);
-            $items = $orderItemModel->getItemsByOrderId($id);
-
-            // 4. RETURN CLEAN JSON
+        if (!$order) {
             echo json_encode([
-                'order' => $order,
-                'items' => $items
+                'success' => false,
+                'error' => 'Order not found'
             ]);
-
-        } catch (Exception $e) {
-            // If something crashes, send the error as a JSON string
-            echo json_encode(['error' => $e->getMessage()]);
+            exit;
         }
-        exit; // Stop everything here to prevent other HTML from leaking in
+
+        // EXTEND USER DATA
+        $order['user'] = null;
+
+        if (!empty($order['user_id'])) {
+
+            $userStmt = $this->conn->prepare("
+                SELECT 
+                    id,
+                    username,
+                    email,
+                    avatar,
+                    status,
+                    created_at
+                FROM users
+                WHERE id = ?
+                LIMIT 1
+            ");
+
+            if ($userStmt) {
+
+                $userStmt->bind_param("i", $order['user_id']);
+                $userStmt->execute();
+
+                $user = $userStmt
+                    ->get_result()
+                    ->fetch_assoc();
+
+                $order['user'] = $user;
+            }
+        }
+
+        // GET ORDER ITEMS
+        $orderItemModel = new OrderItemModel($this->conn);
+
+        $items = $orderItemModel
+            ->getItemsByOrderId($id);
+
+        // RESPONSE
+        echo json_encode([
+            'success' => true,
+            'order'   => $order,
+            'items'   => $items,
+        ], JSON_UNESCAPED_UNICODE);
+
+    } catch (Throwable $e) {
+
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
     }
+
+    exit;
+}
 }

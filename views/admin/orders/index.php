@@ -1,3 +1,25 @@
+<style>
+.srt-card,
+.srt-card-body,
+.table-responsive,
+.dropdown,
+.srt-table,
+.srt-table tbody,
+.srt-table tr,
+.srt-table td {
+    overflow: visible !important;
+}
+
+.dropdown-menu {
+    z-index: 99999 !important;
+    position: absolute !important;
+}
+
+.srt-table {
+    position: relative;
+}
+</style>
+
 <?php include __DIR__ . '/../partials/header.php'; ?>
 
 <div class="srt-page-header">
@@ -17,7 +39,8 @@
     <div class="srt-card-header">
         <span><i class="fa-solid fa-list me-2"></i>Danh sách đơn hàng</span>
     </div>
-    <div style="overflow-x:auto;">
+    <!-- FIX 3: overflow:visible so status dropdown isn't clipped -->
+    <div style="overflow:visible;">
         <table class="srt-table">
             <thead>
                 <tr>
@@ -25,7 +48,7 @@
                     <th>Khách hàng</th>
                     <th style="width:130px;">Tổng tiền</th>
                     <th style="width:110px;">Ngày đặt</th>
-                    <th style="width:160px;">Trạng thái</th>
+                    <th style="width:165px;">Trạng thái</th>
                     <th style="width:90px;text-align:center;">Chi tiết</th>
                 </tr>
             </thead>
@@ -43,7 +66,8 @@
                 while ($order = $orders->fetch_assoc()):
                     $st = $statusLabels[$order['status']] ?? ['Không rõ', 'badge-member'];
             ?>
-                <tr>
+                <!-- FIX 3: position:relative on tr allows dropdown to escape overflow -->
+                <tr style="position:relative;">
                     <td>
                         <span class="fw-bold" style="color:var(--accent);">#<?= $order['id'] ?></span>
                     </td>
@@ -62,26 +86,27 @@
                         <?= $order['created_at'] ? date('d/m/Y H:i', strtotime($order['created_at'])) : '—' ?>
                     </td>
                     <td>
-                        <!-- Status dropdown -->
                         <div class="dropdown">
                             <button type="button"
                                     class="btn-srt-primary btn-srt-sm dropdown-toggle"
                                     data-bs-toggle="dropdown"
+                                    data-bs-boundary="viewport"
                                     style="min-width:130px;justify-content:space-between;
-                                           <?php
-                                           $colors = [
-                                               'pending'   => 'background:#d97706;',
-                                               'paid'      => 'background:#2563eb;',
-                                               'shipping'  => 'background:#0891b2;',
-                                               'completed' => 'background:#16a34a;',
-                                               'cancelled' => 'background:#dc2626;',
-                                           ];
-                                           echo $colors[$order['status']] ?? '';
-                                           ?>">
+                                        <?php
+                                        $colors = [
+                                            'pending'   => 'background:#d97706;',
+                                            'paid'      => 'background:#2563eb;',
+                                            'shipping'  => 'background:#0891b2;',
+                                            'completed' => 'background:#16a34a;',
+                                            'cancelled' => 'background:#dc2626;',
+                                        ];
+                                        echo $colors[$order['status']] ?? '';
+                                        ?>">
                                 <span><?= $st[0] ?></span>
                                 <i class="fa-solid fa-chevron-down" style="font-size:.65rem;"></i>
                             </button>
-                            <ul class="dropdown-menu shadow border-0" style="font-size:.82rem;min-width:155px;">
+                            <!-- FIX 3: dropdown-menu-end + z-index to ensure it appears above table rows -->
+                            <ul class="dropdown-menu shadow border-0" style="font-size:.82rem;min-width:155px;z-index:1055;">
                                 <?php foreach ($statusLabels as $val => [$label, $badgeCls]): ?>
                                 <li>
                                     <form method="POST" action="<?= BASE_PATH ?>/admin/orders/update">
@@ -163,30 +188,77 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body p-0">
-                <!-- Spinner -->
                 <div id="modal-spinner" class="text-center py-5">
                     <div class="spinner-border" style="color:var(--accent);" role="status"></div>
                     <p class="text-muted mt-2 small">Đang tải...</p>
                 </div>
-                <!-- Data -->
                 <div id="modal-data" class="d-none">
-                    <div class="d-flex justify-content-between align-items-center p-4 pb-3"
-                         style="border-bottom:1px solid #f5f5f5;">
-                        <div style="font-size:.85rem;color:#888;">
-                            <i class="fa-solid fa-calendar me-1"></i><span id="display-date"></span>
-                        </div>
-                        <div class="fw-bold" style="font-size:1rem;color:#1a9c5b;" id="display-total"></div>
+
+                    <!-- EXTRA ORDER INFO -->
+                    <div id="order-extra-info"
+                        style="
+                            padding:20px 22px;
+                            background:#fafbfc;
+                            border-bottom:1px solid #f1f1f1;
+                        ">
                     </div>
+
+                    <div class="d-flex justify-content-between align-items-center p-4 pb-3"
+                        style="border-bottom:1px solid #f5f5f5;">
+
+                        <div style="font-size:.85rem;color:#888;">
+                            <i class="fa-solid fa-calendar me-1"></i>
+                            <span id="display-date"></span>
+                        </div>
+
+                        <div class="fw-bold"
+                            style="font-size:1rem;color:#1a9c5b;"
+                            id="display-total">
+                        </div>
+
+                    </div>
+
                     <div style="padding:0 0 8px;">
                         <table style="width:100%;font-size:.85rem;border-collapse:collapse;">
+
                             <thead>
                                 <tr style="background:#f8f9fc;">
-                                    <th style="padding:10px 20px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.7px;color:#888;font-weight:800;">Sản phẩm</th>
-                                    <th style="padding:10px 14px;text-align:center;font-size:.72rem;text-transform:uppercase;letter-spacing:.7px;color:#888;font-weight:800;">SL</th>
-                                    <th style="padding:10px 20px;text-align:right;font-size:.72rem;text-transform:uppercase;letter-spacing:.7px;color:#888;font-weight:800;">Thành tiền</th>
+
+                                    <th style="padding:10px 20px;
+                                            text-align:left;
+                                            font-size:.72rem;
+                                            text-transform:uppercase;
+                                            letter-spacing:.7px;
+                                            color:#888;
+                                            font-weight:800;">
+                                        Sản phẩm
+                                    </th>
+
+                                    <th style="padding:10px 14px;
+                                            text-align:center;
+                                            font-size:.72rem;
+                                            text-transform:uppercase;
+                                            letter-spacing:.7px;
+                                            color:#888;
+                                            font-weight:800;">
+                                        SL
+                                    </th>
+
+                                    <th style="padding:10px 20px;
+                                            text-align:right;
+                                            font-size:.72rem;
+                                            text-transform:uppercase;
+                                            letter-spacing:.7px;
+                                            color:#888;
+                                            font-weight:800;">
+                                        Thành tiền
+                                    </th>
+
                                 </tr>
                             </thead>
+
                             <tbody id="display-items"></tbody>
+
                         </table>
                     </div>
                 </div>
@@ -210,9 +282,14 @@ function showOrderDetail(id) {
         </div>`;
     modal.show();
 
+    // FIX 2: Use BASE_PATH clean URL, not index.php?url=
     fetch(`<?= BASE_PATH ?>/admin/orders/detail?id=${id}`)
         .then(r => {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
+            // FIX 2: Check content-type before parsing to catch HTML error pages
+            const ct = r.headers.get('content-type') || '';
+            if (!ct.includes('application/json')) {
+                throw new Error('Server trả về HTML thay vì JSON (HTTP ' + r.status + '). Kiểm tra lỗi PHP.');
+            }
             return r.json();
         })
         .then(data => {
@@ -220,22 +297,181 @@ function showOrderDetail(id) {
 
             document.getElementById('display-date').textContent = data.order.created_at ?? '—';
             document.getElementById('display-total').textContent =
-                new Intl.NumberFormat('vi-VN').format(data.order.total_price) + 'đ';
+                new Intl.NumberFormat('vi-VN')
+                    .format(data.order.total_price ?? 0) + 'đ';
 
+            // EXTRA ORDER INFO
+            document.getElementById('order-extra-info').innerHTML = `
+                <div class="row g-4" style="font-size:.84rem;line-height:1.45;">
+                    <div class="col-6">
+                    <div style="
+                        color:#9ca3af;
+                        font-size:.72rem;
+                        font-weight:700;
+                        text-transform:uppercase;
+                        letter-spacing:.5px;
+                        margin-bottom:3px;
+                    ">
+                        Khách hàng
+                    </div>   
+                        <div class="fw-semibold">
+                            ${data.order.full_name ?? data.order.user?.username ?? 'Khách'}
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div style="color:#999;">Số điện thoại</div>
+                        <div>
+                            ${data.order.phone ?? '—'}
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div style="color:#999;">Tài khoản</div>
+                        <div>
+                            ${data.order.user?.username ?? 'Guest'}
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div style="color:#999;">Email</div>
+                        <div>
+                            ${data.order.user?.email ?? '—'}
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div style="color:#999;">Trạng thái</div>
+
+                        <div class="fw-bold text-capitalize"
+                            style="
+                                color:
+                                ${
+                                    data.order.status === 'completed'
+                                    ? '#16a34a'
+                                    : data.order.status === 'cancelled'
+                                    ? '#dc2626'
+                                    : data.order.status === 'shipping'
+                                    ? '#0891b2'
+                                    : data.order.status === 'paid'
+                                    ? '#2563eb'
+                                    : '#d97706'
+                                };
+                            ">
+                            ${
+                                data.order.status === 'pending'
+                                ? 'Chờ xử lý'
+                                : data.order.status === 'paid'
+                                ? 'Đã thanh toán'
+                                : data.order.status === 'shipping'
+                                ? 'Đang giao'
+                                : data.order.status === 'completed'
+                                ? 'Hoàn thành'
+                                : 'Đã huỷ'
+                            }
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div style="color:#999;">Thanh toán</div>
+                        <div>
+                            ${data.order.payment_method ?? 'COD'}
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div style="color:#999;">Địa chỉ</div>
+                        <div>
+                            ${data.order.address ?? '—'}
+                        </div>
+                    </div>
+                    ${
+                        data.order.note
+                        ? `
+                        <div class="col-12">
+                            <div style="color:#999;">Ghi chú</div>
+                            <div>${data.order.note}</div>
+                        </div>
+                        `
+                        : ''
+                    }
+
+                </div>
+            `;
             let rows = '';
             if (data.items && data.items.length > 0) {
                 data.items.forEach(item => {
-                    const subtotal = item.price * item.quantity;
-                    rows += `<tr style="border-bottom:1px solid #f5f5f5;">
-                        <td style="padding:10px 20px;">
-                            <div style="font-weight:600;">${item.product_name}</div>
-                            <div style="font-size:.78rem;color:#aaa;">${new Intl.NumberFormat('vi-VN').format(item.price)}đ/cái</div>
+                    const subtotal = (item.price ?? 0) * (item.quantity ?? 1);
+                    rows += `
+                    <tr style="border-bottom:1px solid #f5f5f5;">
+
+                        <td style="padding:12px 20px;">
+
+                            <div style="
+                                display:flex;
+                                align-items:center;
+                                gap:12px;
+                            ">
+
+                                <img
+                                    src="<?= BASE_PATH ?>/${item.image ?? 'uploads/products/default.png'}"
+                                    alt="${item.product_name ?? 'Product'}"
+                                    style="
+                                        width:52px;
+                                        height:52px;
+                                        object-fit:cover;
+                                        border-radius:12px;
+                                        border:1px solid #eee;
+                                        background:#fff;
+                                        flex-shrink:0;
+                                    "
+                                >
+
+                                <div>
+
+                                    <div style="
+                                        font-weight:600;
+                                        color:#222;
+                                        margin-bottom:2px;
+                                    ">
+                                        ${item.product_name ?? 'Sản phẩm'}
+                                    </div>
+
+                                    <div style="
+                                        font-size:.78rem;
+                                        color:#999;
+                                    ">
+                                        ${new Intl.NumberFormat('vi-VN')
+                                            .format(item.price ?? 0)}đ/cái
+                                    </div>
+
+                                </div>
+
+                            </div>
+
                         </td>
-                        <td style="padding:10px 14px;text-align:center;color:#555;">${item.quantity}</td>
-                        <td style="padding:10px 20px;text-align:right;font-weight:700;color:#1a9c5b;">
-                            ${new Intl.NumberFormat('vi-VN').format(subtotal)}đ
+
+                        <td style="
+                            padding:10px 14px;
+                            text-align:center;
+                            color:#555;
+                            font-weight:600;
+                        ">
+                            ${item.quantity}
                         </td>
-                    </tr>`;
+
+                        <td style="
+                            padding:10px 20px;
+                            text-align:right;
+                            font-weight:700;
+                            color:#16a34a;
+                            white-space:nowrap;
+                        ">
+                            ${new Intl.NumberFormat('vi-VN')
+                                .format(subtotal)}đ
+                        </td>
+
+                    </tr>
+                    `;
                 });
             } else {
                 rows = '<tr><td colspan="3" style="padding:20px;text-align:center;color:#aaa;">Không có sản phẩm.</td></tr>';
@@ -248,7 +484,7 @@ function showOrderDetail(id) {
             document.getElementById('modal-spinner').innerHTML = `
                 <div class="text-center py-4">
                     <i class="fa-solid fa-circle-exclamation fa-2x text-danger mb-2 d-block"></i>
-                    <p class="text-danger small">Lỗi: ${err.message}</p>
+                    <p class="text-danger small">${err.message}</p>
                 </div>`;
         });
 }
