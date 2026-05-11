@@ -31,58 +31,71 @@
     <div class="container my-3">
         <div class="row g-5">
 
-            <!-- Left: dark info card (partner's design) -->
+            <!-- Left: dark info card -->
             <div class="col-lg-5" data-aos="fade-right">
                 <div class="card border-0 bg-dark text-white rounded-4 p-5 h-100 shadow-lg">
                     <h3 class="fw-bold mb-2">Thông tin liên hệ</h3>
                     <p class="text-secondary mb-4">Chào mừng bạn ghé thăm văn phòng hoặc liên hệ trực tiếp qua các kênh sau:</p>
 
-                    <div class="d-flex align-items-center mb-4">
+                    <!-- HOTLINE - Blue background, white icon -->
+                    <div class="contact-info-item d-flex align-items-center mb-4">
                         <div class="icon-box bg-primary rounded-circle me-3 flex-shrink-0">
-                            <i class="bi bi-telephone-fill"></i>
+                            <i class="fas fa-phone-alt text-white"></i>
                         </div>
                         <div>
-                            <p class="mb-0 small text-secondary text-uppercase">Hotline</p>
-                            <h6 class="mb-0"><?= htmlspecialchars($globalSettings['company_phone'] ?? '0123 456 789') ?></h6>
+                            <p class="mb-0 small text-secondary text-uppercase">HOTLINE</p>
+                            <h6 class="mb-0 text-white"><?= htmlspecialchars($globalSettings['company_phone'] ?? '0123 456 789') ?></h6>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center mb-4">
+                    <!-- EMAIL - Green background, white icon -->
+                    <div class="contact-info-item d-flex align-items-center mb-4">
                         <div class="icon-box bg-success rounded-circle me-3 flex-shrink-0">
-                            <i class="bi bi-envelope-at-fill"></i>
+                            <i class="fas fa-envelope text-white"></i>
                         </div>
                         <div>
-                            <p class="mb-0 small text-secondary text-uppercase">Email</p>
-                            <h6 class="mb-0"><?= htmlspecialchars($globalSettings['company_email'] ?? 'contact@techsaas.vn') ?></h6>
+                            <p class="mb-0 small text-secondary text-uppercase">EMAIL</p>
+                            <h6 class="mb-0 text-white"><?= htmlspecialchars($globalSettings['company_email'] ?? 'contact@techsaas.vn') ?></h6>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="icon-box bg-warning rounded-circle me-3 flex-shrink-0 text-dark">
-                            <i class="bi bi-geo-alt-fill"></i>
+                    <!-- ADDRESS - Yellow background, white icon -->
+                    <div class="contact-info-item d-flex align-items-center mb-4">
+                        <div class="icon-box bg-warning rounded-circle me-3 flex-shrink-0">
+                            <i class="fas fa-map-marker-alt text-white"></i>
                         </div>
                         <div>
-                            <p class="mb-0 small text-secondary text-uppercase">Địa chỉ</p>
-                            <h6 class="mb-0"><?= htmlspecialchars($globalSettings['company_address'] ?? 'Quận 1, TP. Hồ Chí Minh') ?></h6>
+                            <p class="mb-0 small text-secondary text-uppercase">ĐỊA CHỈ</p>
+                            <h6 class="mb-0 text-white"><?= htmlspecialchars($globalSettings['company_address'] ?? 'Quận 12, TP. Hồ Chí Minh') ?></h6>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center mb-5">
+                    <!-- HOURS - Cyan background, white icon -->
+                    <div class="contact-info-item d-flex align-items-center mb-5">
                         <div class="icon-box bg-info rounded-circle me-3 flex-shrink-0">
-                            <i class="bi bi-clock-fill"></i>
+                            <i class="fas fa-clock text-white"></i>
                         </div>
                         <div>
-                            <p class="mb-0 small text-secondary text-uppercase">Giờ làm việc</p>
-                            <h6 class="mb-0">T2–T6: 08:00–17:30 | T7: 08:00–12:00</h6>
+                            <p class="mb-0 small text-secondary text-uppercase">GIỜ LÀM VIỆC</p>
+                            <h6 class="mb-0 text-white">T2–T6: 08:00–17:30 | T7: 08:00–12:00</h6>
                         </div>
                     </div>
 
                     <div class="mt-auto">
                         <h6 class="text-uppercase small text-secondary mb-3">Mạng xã hội</h6>
                         <div class="d-flex gap-3">
-                            <a href="#" class="btn btn-outline-light rounded-circle p-2"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="btn btn-outline-light rounded-circle p-2"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" class="btn btn-outline-light rounded-circle p-2"><i class="bi bi-twitter-x"></i></a>
+                            <a href="https://facebook.com/techsaas.vn" class="social-icon-contact" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://linkedin.com/company/techsaas" class="social-icon-contact" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                            <a href="https://twitter.com/techsaas" class="social-icon-contact" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://instagram.com/techsaas" class="social-icon-contact" target="_blank" rel="noopener noreferrer">
+                                <i class="fab fa-instagram"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -152,13 +165,109 @@
 <section class="py-5 mb-5" data-aos="zoom-in">
     <div class="container">
         <div class="ratio ratio-21x9 rounded-4 overflow-hidden shadow">
-            <?php $mapAddress = urlencode($globalSettings['company_address'] ?? 'Quận 1, TP. Hồ Chí Minh'); ?>
+            <?php $mapAddress = urlencode($globalSettings['company_address'] ?? 'Quận 12, TP. Hồ Chí Minh'); ?>
             <iframe src="https://www.google.com/maps?q=<?= $mapAddress ?>&output=embed"
                     style="border:0;" allowfullscreen="" loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
     </div>
 </section>
+
+<style>
+/* Contact Info Items Animation */
+.contact-info-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.contact-info-item:hover {
+    transform: translateX(10px);
+}
+
+.contact-info-item:hover .icon-box {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* Icon Box Styling - Keep original colors, icons white */
+.icon-box {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.icon-box i {
+    color: white !important;
+    font-size: 1.3rem;
+}
+
+/* Social Icons for Contact Page */
+.social-icon-contact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+}
+
+.social-icon-contact:hover {
+    background: #4361ee;
+    color: white;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+}
+
+/* Form Input Focus Animation */
+.form-control {
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #4361ee;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Button Hover Animation */
+.btn-gradient {
+    background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+    border: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+    background: linear-gradient(135deg, #3a0ca3 0%, #4361ee 100%);
+}
+
+.btn-gradient:active {
+    transform: translateY(1px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-info-item:hover {
+        transform: translateX(5px);
+    }
+    
+    .social-icon-contact {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+    }
+}
+</style>
 
 <script>
 const msgInput = document.getElementById('messageInput');
@@ -169,24 +278,38 @@ if (msgInput) {
         charCount.classList.toggle('text-warning', this.value.length > 1800);
     });
 }
-document.getElementById('contactForm').addEventListener('submit', function(e) {
-    let valid = true;
-    const name   = document.getElementById('nameInput');
-    const email  = document.getElementById('emailInput');
-    const msg    = document.getElementById('messageInput');
-    const msgErr = document.getElementById('msgError');
-    [name, email, msg].forEach(el => el.classList.remove('is-invalid'));
-    msgErr.style.display = 'none';
-    if (!name.value.trim() || name.value.trim().length < 2) { name.classList.add('is-invalid'); valid = false; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { email.classList.add('is-invalid'); valid = false; }
-    if (!msg.value.trim() || msg.value.trim().length < 10) {
-        msg.classList.add('is-invalid');
-        msgErr.textContent = 'Nội dung ít nhất 10 ký tự.';
-        msgErr.style.display = 'block';
-        valid = false;
-    }
-    if (!valid) e.preventDefault();
-});
+
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        let valid = true;
+        const name   = document.getElementById('nameInput');
+        const email  = document.getElementById('emailInput');
+        const msg    = document.getElementById('messageInput');
+        const msgErr = document.getElementById('msgError');
+        
+        [name, email, msg].forEach(el => el?.classList.remove('is-invalid'));
+        if (msgErr) msgErr.style.display = 'none';
+        
+        if (!name.value.trim() || name.value.trim().length < 2) { 
+            name.classList.add('is-invalid'); 
+            valid = false; 
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) { 
+            email.classList.add('is-invalid'); 
+            valid = false; 
+        }
+        if (!msg.value.trim() || msg.value.trim().length < 10) {
+            msg.classList.add('is-invalid');
+            if (msgErr) {
+                msgErr.textContent = 'Nội dung ít nhất 10 ký tự.';
+                msgErr.style.display = 'block';
+            }
+            valid = false;
+        }
+        if (!valid) e.preventDefault();
+    });
+}
 </script>
 
 <?php include __DIR__ . '/components/footer.php'; ?>
