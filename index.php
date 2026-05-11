@@ -112,6 +112,9 @@ switch (true) {
     case $url === 'faqs/submit':
         (new FaqController($conn))->submit();
         break;
+    case $url === 'about':
+        require_once "views/client/about.php";
+        break;
     // ── ADMIN: FAQ ROUTES (HIDDEN ID) ────────────────────────────────
     case $url === 'admin/faqs':
         (new AdminFaqController($conn))->index();

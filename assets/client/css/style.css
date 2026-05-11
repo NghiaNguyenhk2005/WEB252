@@ -148,7 +148,54 @@ body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-
     }
 }
 
+/* Footer Styles */
+.hover-link {
+    transition: all 0.3s ease;
+}
 
+.hover-link:hover {
+    color: var(--accent, #4361ee) !important;
+    padding-left: 5px;
+}
+
+.social-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-icon:hover {
+    background: var(--accent, #4361ee);
+    color: white;
+    transform: translateY(-3px);
+}
+
+/* Responsive Footer */
+@media (max-width: 768px) {
+    footer {
+        text-align: center;
+    }
+    
+    .social-icon {
+        margin: 0 auto;
+    }
+    
+    .d-flex.gap-2 {
+        justify-content: center;
+    }
+    
+    .mb-3.d-flex {
+        justify-content: center;
+    }
+}
 /* --- SCROLLBAR --- */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; }
