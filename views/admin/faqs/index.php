@@ -73,22 +73,23 @@
                                     <?= $faq['created_at'] ? date('d/m/Y', strtotime($faq['created_at'])) : '' ?>
                                 </div>
                             </td>
-                            <td style="text-align:center;">
-                                <div class="srt-actions" style="justify-content:center;">
-                                    <a href="<?= BASE_PATH ?>/admin/faqs/edit/<?= $faq['id'] ?>"
-                                       class="btn-srt-primary btn-srt-sm text-decoration-none" title="Trả lời / Chỉnh sửa">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <form method="POST"
-                                          action="<?= BASE_PATH ?>/admin/faqs/delete/<?= $faq['id'] ?>"
-                                          onsubmit="return confirm('Xoá câu hỏi này?')">
-                                        <?= csrf_field() ?>
-                                        <button type="submit" class="btn-srt-danger btn-srt-sm" title="Xoá">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
+                        <td style="text-align:center;">
+                            <div class="srt-actions" style="justify-content:center;">
+                                <a href="<?= BASE_PATH ?>/admin/faqs/edit?id=<?= $faq['id'] ?>"
+                                class="btn-srt-primary btn-srt-sm text-decoration-none" title="Trả lời / Chỉnh sửa">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form method="POST"
+                                    action="<?= BASE_PATH ?>/admin/faqs/delete"
+                                    onsubmit="return confirm('Xoá câu hỏi này?')">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="id" value="<?= $faq['id'] ?>">
+                                    <button type="submit" class="btn-srt-danger btn-srt-sm" title="Xoá">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
                         </tr>
                     <?php endwhile; else: ?>
                         <tr>

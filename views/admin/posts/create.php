@@ -6,7 +6,7 @@
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body p-4 p-md-5">
                     <h4 class="header-title mb-4">Viết bài mới</h4>
-                    <form action="index.php?url=admin/posts/store" method="POST" enctype="multipart/form-data">
+                    <form action="<?= BASE_PATH ?>/admin/posts/store" method="POST" enctype="multipart/form-data">
                         <div class="form-group mb-4">
                             <label class="fw-bold">Tiêu đề bài viết</label>
                             <input type="text" class="form-control" name="title" placeholder="Nhập tiêu đề hấp dẫn..." required>

@@ -44,14 +44,15 @@
                     </td>
                     <td style="text-align:center;">
                         <div class="srt-actions" style="justify-content:center;">
-                            <a href="<?= BASE_PATH ?>/admin/services/edit/<?= $s['id'] ?>"
-                               class="btn-srt-warning btn-srt-sm text-decoration-none" title="Chỉnh sửa">
+                            <a href="<?= BASE_PATH ?>/admin/services/edit?id=<?= $s['id'] ?>"
+                            class="btn-srt-warning btn-srt-sm text-decoration-none" title="Chỉnh sửa">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
                             <form method="POST"
-                                  action="<?= BASE_PATH ?>/admin/services/delete/<?= $s['id'] ?>"
-                                  onsubmit="return confirm('Xoá dịch vụ «<?= addslashes(htmlspecialchars($s['name'])) ?>»?')">
+                                action="<?= BASE_PATH ?>/admin/services/delete"
+                                onsubmit="return confirm('Xoá dịch vụ «<?= addslashes(htmlspecialchars($s['name'])) ?>»?')">
                                 <?= csrf_field() ?>
+                                <input type="hidden" name="id" value="<?= $s['id'] ?>">
                                 <button type="submit" class="btn-srt-danger btn-srt-sm" title="Xoá">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>

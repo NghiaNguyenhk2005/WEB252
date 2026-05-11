@@ -107,22 +107,51 @@ switch (true) {
         (new PostController($conn))->show($m[1]);
         break;
 
-    case $url === 'faqs':
-        (new FaqController($conn))->index();
+    // ── ADMIN: FAQ ROUTES (HIDDEN ID) ────────────────────────────────
+    case $url === 'admin/faqs':
+        (new AdminFaqController($conn))->index();
         break;
 
-    case $url === 'faqs/submit':
-        (new FaqController($conn))->submit();
+    case $url === 'admin/faqs/store':
+        (new AdminFaqController($conn))->store();
         break;
 
-    case $url === 'services':
-        (new ServiceController($conn))->index();
+    case $url === 'admin/faqs/edit':
+        (new AdminFaqController($conn))->edit();
         break;
 
-    case preg_match('/^service\/([a-zA-Z0-9-]+)$/', $url, $m):
-        (new ServiceController($conn))->show($m[1]);
+    case $url === 'admin/faqs/update':
+        (new AdminFaqController($conn))->update();
         break;
 
+    case $url === 'admin/faqs/delete':
+        (new AdminFaqController($conn))->delete();
+        break;
+
+    // ── ADMIN: SERVICE ROUTES (HIDDEN ID) ────────────────────────────────
+    case $url === 'admin/services':
+        (new AdminServiceController($conn))->index();
+        break;
+
+    case $url === 'admin/services/create':
+        (new AdminServiceController($conn))->create();
+        break;
+
+    case $url === 'admin/services/store':
+        (new AdminServiceController($conn))->store();
+        break;
+
+    case $url === 'admin/services/edit':
+        (new AdminServiceController($conn))->edit();
+        break;
+
+    case $url === 'admin/services/update':
+        (new AdminServiceController($conn))->update();
+        break;
+
+    case $url === 'admin/services/delete':
+        (new AdminServiceController($conn))->delete();
+        break;
     case $url === 'cart':
         (new CartController($conn))->index();
         break;
@@ -239,11 +268,18 @@ switch (true) {
     case $url === 'admin/products/store':
         (new AdminProductController($conn))->store();
         break;
-
-    case $url === 'admin/products/delete':
-        (new AdminProductController($conn))->delete((int)($_GET['id'] ?? 0));
+    case $url === 'admin/products/edit':
+        (new AdminProductController($conn))->edit();
         break;
 
+    case $url === 'admin/products/update':
+        (new AdminProductController($conn))->update();
+        break;
+
+    case $url === 'admin/products/delete':
+        (new AdminProductController($conn))->delete();
+        break;
+        
     case $url === 'admin/orders':
         (new AdminOrderController($conn))->index();
         break;
@@ -256,6 +292,11 @@ switch (true) {
         (new AdminPostController($conn))->index();
         break;
 
+    // ── ADMIN: POST ROUTES (HIDDEN ID - LIKE PRODUCTS) ────────────────
+    case $url === 'admin/posts':
+        (new AdminPostController($conn))->index();
+        break;
+
     case $url === 'admin/posts/create':
         (new AdminPostController($conn))->create();
         break;
@@ -264,8 +305,19 @@ switch (true) {
         (new AdminPostController($conn))->store();
         break;
 
+    // Edit route with query parameter (not in path)
+    case $url === 'admin/posts/edit':
+        (new AdminPostController($conn))->edit();
+        break;
+
+    // Update route (POST with hidden ID)
+    case $url === 'admin/posts/update':
+        (new AdminPostController($conn))->update();
+        break;
+
+    // Delete route (POST with hidden ID)
     case $url === 'admin/posts/delete':
-        (new AdminPostController($conn))->delete((int)($_GET['id'] ?? 0));
+        (new AdminPostController($conn))->delete();
         break;
 
     case $url === 'admin/categories':

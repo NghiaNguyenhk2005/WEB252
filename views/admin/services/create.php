@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title">Thêm Dịch vụ mới</h4>
-                    <form action="index.php?url=admin/services/store" method="POST">
+                    <form action="<?= BASE_PATH ?>/admin/services/store" method="POST">
                         <div class="form-group">
                             <label>Tên dịch vụ</label>
                             <input type="text" class="form-control" name="name" required>

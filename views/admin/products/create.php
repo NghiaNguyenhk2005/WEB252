@@ -6,7 +6,9 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="header-title">Thêm sản phẩm mới</h4>
-                    <form action="index.php?url=admin/products/store" method="POST" enctype="multipart/form-data">
+                        <form action="<?= BASE_PATH ?>/admin/products/store"
+                            method="POST"
+                            enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="name">Tên sản phẩm</label>
                             <input type="text" class="form-control" id="name" name="name" required>

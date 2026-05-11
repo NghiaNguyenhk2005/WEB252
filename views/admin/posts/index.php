@@ -53,18 +53,19 @@
                     <td style="text-align:center;">
                         <div class="srt-actions" style="justify-content:center;">
                             <a href="<?= BASE_PATH ?>/news/<?= htmlspecialchars($post['slug'] ?? '') ?>"
-                               target="_blank"
-                               class="btn-srt-secondary btn-srt-sm text-decoration-none" title="Xem bài viết">
+                            target="_blank"
+                            class="btn-srt-secondary btn-srt-sm text-decoration-none" title="Xem bài viết">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
-                            <a href="<?= BASE_PATH ?>/admin/posts/edit/<?= $post['id'] ?>"
-                               class="btn-srt-warning btn-srt-sm text-decoration-none" title="Chỉnh sửa">
+                            <a href="<?= BASE_PATH ?>/admin/posts/edit?id=<?= $post['id'] ?>"
+                            class="btn-srt-warning btn-srt-sm text-decoration-none" title="Chỉnh sửa">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
                             <form method="POST"
-                                  action="<?= BASE_PATH ?>/admin/posts/delete/<?= $post['id'] ?>"
-                                  onsubmit="return confirm('Xoá bài viết này?')">
+                                action="<?= BASE_PATH ?>/admin/posts/delete"
+                                onsubmit="return confirm('Xoá bài viết này?')">
                                 <?= csrf_field() ?>
+                                <input type="hidden" name="id" value="<?= $post['id'] ?>">
                                 <button type="submit" class="btn-srt-danger btn-srt-sm" title="Xoá">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
