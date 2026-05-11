@@ -1,10 +1,15 @@
 <?php
 
+require_once __DIR__ . '/../../core/SEO.php';
+require_once __DIR__ . '/../../core/SEOTrait.php';
+
 /**
  * Quản lý danh sách và chi tiết bài viết phía khách hàng
  */
 class PostController
 {
+    use SEOTrait;
+    
     private $postModel;
     private $conn;
 
@@ -19,6 +24,11 @@ class PostController
      */
     public function index()
     {
+        global $globalSettings;
+        
+        // Set SEO for news listing page
+        $this->setPageSEO('news');
+        
         $limit = 6;
         $page = $_GET['page'] ?? 1;
         $offset = ($page - 1) * $limit;
@@ -35,12 +45,17 @@ class PostController
      */
     public function show($slug)
     {
+        global $globalSettings;
+        
         $post = $this->postModel->where('slug', $slug)->where('status', 1)->first();
         
         if (!$post) {
-            header("Location: index.php?url=news");
+            header("Location: " . BASE_PATH . "/news");
             exit;
         }
+        
+        // Set SEO for post detail page
+        $this->setPageSEO('post', $post);
 
         require_once "app/models/PostCommentModel.php";
         $commentModel = new PostCommentModel($this->conn);

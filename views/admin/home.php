@@ -224,36 +224,126 @@ if ($db_conn) {
     <!-- Alerts + Recent Contacts -->
     <div class="col-lg-5">
 
-        <!-- System alerts -->
+        <!-- System alerts - Clean Version -->
         <?php if ($pendingOrders > 0 || $newContacts > 0 || $pendingFaqs > 0): ?>
-        <div class="srt-card mb-4">
-            <div class="srt-card-header">
-                <span><i class="fa-solid fa-bell me-2" style="color:#f59e0b;"></i>Cần xử lý</span>
-            </div>
-            <div class="srt-card-body" style="padding:14px 18px;">
-                <?php if ($pendingOrders > 0): ?>
-                    <div class="srt-alert srt-alert-warning mb-2">
-                        <i class="fa-solid fa-clock"></i>
-                        <span><strong><?= $pendingOrders ?></strong> đơn hàng đang chờ xử lý.
-                        <a href="<?= BASE_PATH ?>/admin/orders" class="fw-bold ms-1" style="color:inherit;">Xem ngay →</a></span>
+        <div class="alerts-wrapper mb-4">
+            <?php if ($pendingOrders > 0): ?>
+                <div class="alert-card alert-order" onclick="window.location.href='<?= BASE_PATH ?>/admin/orders'">
+                    <div class="alert-icon">📦</div>
+                    <div class="alert-content">
+                        <span class="alert-count"><?= $pendingOrders ?></span>
+                        <span class="alert-text">đơn hàng chờ xử lý</span>
                     </div>
-                <?php endif; ?>
-                <?php if ($newContacts > 0): ?>
-                    <div class="srt-alert srt-alert-info mb-2">
-                        <i class="fa-solid fa-envelope"></i>
-                        <span><strong><?= $newContacts ?></strong> liên hệ mới chưa đọc.
-                        <a href="<?= BASE_PATH ?>/admin/contacts" class="fw-bold ms-1" style="color:inherit;">Xem ngay →</a></span>
+                    <div class="alert-arrow">→</div>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($newContacts > 0): ?>
+                <div class="alert-card alert-contact" onclick="window.location.href='<?= BASE_PATH ?>/admin/contacts'">
+                    <div class="alert-icon">✉️</div>
+                    <div class="alert-content">
+                        <span class="alert-count"><?= $newContacts ?></span>
+                        <span class="alert-text">liên hệ mới</span>
                     </div>
-                <?php endif; ?>
-                <?php if ($pendingFaqs > 0): ?>
-                    <div class="srt-alert srt-alert-warning mb-0">
-                        <i class="fa-solid fa-circle-question"></i>
-                        <span><strong><?= $pendingFaqs ?></strong> câu hỏi FAQ chờ trả lời.
-                        <a href="<?= BASE_PATH ?>/admin/faqs" class="fw-bold ms-1" style="color:inherit;">Xem ngay →</a></span>
+                    <div class="alert-arrow">→</div>
+                </div>
+            <?php endif; ?>
+            
+            <?php if ($pendingFaqs > 0): ?>
+                <div class="alert-card alert-faq" onclick="window.location.href='<?= BASE_PATH ?>/admin/faqs'">
+                    <div class="alert-icon">❓</div>
+                    <div class="alert-content">
+                        <span class="alert-count"><?= $pendingFaqs ?></span>
+                        <span class="alert-text">câu hỏi chờ trả lời</span>
                     </div>
-                <?php endif; ?>
-            </div>
+                    <div class="alert-arrow">→</div>
+                </div>
+            <?php endif; ?>
         </div>
+
+        <style>
+        .alerts-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .alert-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+
+        .alert-card:hover {
+            transform: translateX(5px);
+            border-left: 4px solid;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .alert-order:hover { border-left-color: #f59e0b; }
+        .alert-contact:hover { border-left-color: #4e73df; }
+        .alert-faq:hover { border-left-color: #1cc88a; }
+
+        .alert-icon {
+            font-size: 1.5rem;
+        }
+
+        .alert-content {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .alert-count {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-right: 8px;
+        }
+
+        .alert-order .alert-count { color: #f59e0b; }
+        .alert-contact .alert-count { color: #4e73df; }
+        .alert-faq .alert-count { color: #1cc88a; }
+
+        .alert-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .alert-arrow {
+            color: #ccc;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .alert-card:hover .alert-arrow {
+            transform: translateX(5px);
+            color: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .alert-card {
+                padding: 12px 16px;
+            }
+            
+            .alert-icon {
+                font-size: 1.2rem;
+            }
+            
+            .alert-count {
+                font-size: 1rem;
+            }
+            
+            .alert-text {
+                font-size: 0.8rem;
+            }
+        }
+        </style>
         <?php endif; ?>
 
         <!-- Recent contacts -->

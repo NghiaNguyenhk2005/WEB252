@@ -3,14 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> - Giải pháp Doanh nghiệp</title>
+    
+    <?php
+    // Load SEO class if not already loaded
+    if (!class_exists('SEO') && file_exists(__DIR__ . '/../../app/core/SEO.php')) {
+        require_once __DIR__ . '/../../app/core/SEO.php';
+    }
+    
+    // Set default SEO for homepage if not set
+    if (!isset($seo) && class_exists('SEO')) {
+        SEO::set('title', ($globalSettings['site_name'] ?? 'TechSaaS') . ' - Giải pháp Doanh nghiệp')
+            ->set('description', $globalSettings['site_description'] ?? 'Nền tảng cung cấp giải pháp công nghệ tối ưu cho doanh nghiệp vừa và nhỏ tại Việt Nam.')
+            ->set('keywords', 'techsaas, giải pháp công nghệ, doanh nghiệp, SaaS, chuyển đổi số, Việt Nam')
+            ->set('author', $globalSettings['site_name'] ?? 'TechSaaS')
+            ->set('og_image', BASE_PATH . '/assets/client/img/og-image.jpg')
+            ->set('og_type', 'website');
+    }
+    
+    // Render SEO tags if class exists
+    if (class_exists('SEO')) {
+        echo SEO::render();
+    } else {
+        // Fallback SEO tags
+        ?>
+        <title><?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> - Giải pháp Doanh nghiệp</title>
+        <meta name="description" content="<?= htmlspecialchars($globalSettings['site_description'] ?? 'Nền tảng cung cấp giải pháp công nghệ tối ưu cho doanh nghiệp vừa và nhỏ tại Việt Nam.') ?>">
+        <meta name="keywords" content="techsaas, giải pháp công nghệ, doanh nghiệp, SaaS, chuyển đổi số">
+        <meta name="author" content="<?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?>">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="<?= BASE_PATH ?>/">
+        <?php
+    }
+    ?>
+    
+    <!-- Open Graph / Facebook (Fallback) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?= BASE_PATH ?>/">
+    <meta property="og:title" content="<?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> - Giải pháp Doanh nghiệp">
+    <meta property="og:description" content="<?= htmlspecialchars($globalSettings['site_description'] ?? 'Nền tảng cung cấp giải pháp công nghệ tối ưu cho doanh nghiệp vừa và nhỏ tại Việt Nam.') ?>">
+    <meta property="og:image" content="<?= BASE_PATH ?>/assets/client/img/og-image.jpg">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?> - Giải pháp Doanh nghiệp">
+    <meta name="twitter:description" content="<?= htmlspecialchars($globalSettings['site_description'] ?? 'Nền tảng cung cấp giải pháp công nghệ tối ưu cho doanh nghiệp vừa và nhỏ tại Việt Nam.') ?>">
+    <meta name="twitter:image" content="<?= BASE_PATH ?>/assets/client/img/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?= BASE_PATH ?>/favicon.ico">
+    <link rel="apple-touch-icon" href="<?= BASE_PATH ?>/assets/client/img/apple-touch-icon.png">
+    
+    <!-- CSS Libraries -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/client/css/style.css">
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?= BASE_PATH ?>/assets/client/css/style.css">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="<?= BASE_PATH ?>/assets/client/css/style.css" as="style">
+    
+    <!-- Structured Data / JSON-LD for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "<?= htmlspecialchars($globalSettings['site_name'] ?? 'TechSaaS') ?>",
+        "url": "<?= BASE_PATH ?>/",
+        "logo": "<?= BASE_PATH ?>/assets/client/img/logo.png",
+        "description": "<?= htmlspecialchars($globalSettings['site_description'] ?? 'Nền tảng cung cấp giải pháp công nghệ tối ưu cho doanh nghiệp vừa và nhỏ tại Việt Nam.') ?>",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Ho Chi Minh City",
+            "addressCountry": "Vietnam"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "<?= htmlspecialchars($globalSettings['company_phone'] ?? '0123 456 789') ?>",
+            "contactType": "customer service"
+        },
+        "sameAs": [
+            "https://facebook.com/techsaas.vn",
+            "https://linkedin.com/company/techsaas",
+            "https://twitter.com/techsaas"
+        ]
+    }
+    </script>
 </head>
 <body>
 <?php $bp = BASE_PATH; ?>

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Sitemap: http://localhost/WEB252/sitemap.php
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /profile/

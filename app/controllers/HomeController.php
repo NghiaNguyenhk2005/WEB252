@@ -1,5 +1,10 @@
 <?php
+require_once __DIR__ . '/../core/SEO.php';
+require_once __DIR__ . '/../core/SEOTrait.php';
+
 class HomeController extends BaseController {
+    use SEOTrait;
+    
     private $sliderModel;
     private $conn;
 
@@ -10,6 +15,11 @@ class HomeController extends BaseController {
 
     public function index() {
         global $globalSettings;
+        
+        // Set SEO for homepage
+        $this->setPageSEO('home');
+        
+        // Get active sliders
         $activeSliders = $this->sliderModel->getActive();
 
         // Latest products — null-safe if table empty

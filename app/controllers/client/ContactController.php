@@ -1,42 +1,60 @@
 <?php
-class ContactController extends BaseController {
-    private $contactModel;
+
+require_once __DIR__ . '/../../core/SEO.php';
+require_once __DIR__ . '/../../core/SEOTrait.php';
+
+class ContactController {
+    use SEOTrait;
+    
+    private $conn;
 
     public function __construct($conn) {
-        $this->contactModel = new ContactModel($conn);
+        $this->conn = $conn;
     }
 
     public function index() {
         global $globalSettings;
-        $this->view('client/contact', ['globalSettings' => $globalSettings]);
+        
+        // Set SEO for contact page
+        $this->setPageSEO('contact');
+        
+        require_once "views/client/contact.php";
     }
-
+    
     public function submit() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/contact');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // CSRF protection
+            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                $_SESSION['error'] = 'Lỗi bảo mật, vui lòng thử lại';
+                header("Location: " . BASE_PATH . "/contact");
+                exit;
+            }
+            
+            $name = htmlspecialchars(trim($_POST['name'] ?? ''));
+            $email = htmlspecialchars(trim($_POST['email'] ?? ''));
+            $message = htmlspecialchars(trim($_POST['message'] ?? ''));
+            
+            // Validate
+            $errors = [];
+            if (empty($name)) $errors[] = 'Vui lòng nhập họ tên';
+            if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email không hợp lệ';
+            if (empty($message)) $errors[] = 'Vui lòng nhập nội dung';
+            
+            if (empty($errors)) {
+                $sql = "INSERT INTO contacts (name, email, message, status, created_at) VALUES (?, ?, ?, 'new', NOW())";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->bind_param("sss", $name, $email, $message);
+                
+                if ($stmt->execute()) {
+                    $_SESSION['success'] = 'Tin nhắn đã được gửi thành công!';
+                    header("Location: " . BASE_PATH . "/contact?success=1");
+                    exit;
+                }
+            } else {
+                $_SESSION['error'] = implode(', ', $errors);
+            }
         }
-        $this->verifyCsrf();
-
-        $name    = htmlspecialchars(trim($_POST['name']    ?? ''));
-        $email   = filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL);
-        $message = htmlspecialchars(trim($_POST['message'] ?? ''));
-
-        $errors = [];
-        if (strlen($name) < 2)                           $errors[] = 'name';
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL))  $errors[] = 'email';
-        if (strlen($message) < 10)                       $errors[] = 'message';
-
-        if (!empty($errors)) {
-            $this->redirect('/contact?error=' . implode(',', $errors));
-        }
-
-        $this->contactModel->createContact([
-            'name'    => $name,
-            'email'   => $email,
-            'message' => $message,
-            'user_id' => $_SESSION['user']['id'] ?? null,
-        ]);
-
-        $this->redirect('/contact?success=1');
+        header("Location: " . BASE_PATH . "/contact");
+        exit;
     }
 }

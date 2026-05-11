@@ -56,15 +56,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Auto-dismiss alerts
-    document.querySelectorAll('.srt-alert').forEach(function(el) {
-        setTimeout(function() {
-            el.style.opacity = '0';
-            setTimeout(function() {
-                if (el && el.remove) el.remove();
-            }, 400);
-        }, 4000);
-    });
+    // ── Auto-dismiss alerts (DISABLED - manual dismiss only) ──
+    // Alerts now stay until manually closed with the X button
+    // document.querySelectorAll('.srt-alert').forEach(el => {
+    //     el.style.transition = 'opacity .4s';
+    //     setTimeout(() => {
+    //         el.style.opacity = '0';
+    //         setTimeout(() => el.remove(), 400);
+    //     }, 4000);
+    // });
     
     // Add breadcrumb from page title
     const pageTitle = document.querySelector('.srt-page-header h4');

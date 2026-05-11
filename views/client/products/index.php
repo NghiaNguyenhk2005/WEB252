@@ -1,3 +1,7 @@
+<?php
+// SEO is already set in the controller
+// The header will render the SEO tags automatically
+?>
 <?php require_once 'views/client/components/header.php'; ?>
 
 <section class="py-5 bg-light">
