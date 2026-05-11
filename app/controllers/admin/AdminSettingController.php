@@ -110,4 +110,70 @@ class AdminSettingController extends BaseController {
         }
         $this->redirect('/admin/settings?success=1');
     }
+
+    public function about() {
+        global $globalSettings;
+        
+        // Get about settings
+        $aboutSettings = [
+            'title' => $this->settingModel->getByKey('about_title') ?? 'Về chúng tôi',
+            'subtitle' => $this->settingModel->getByKey('about_subtitle') ?? '',
+            'company_name' => $this->settingModel->getByKey('about_company_name') ?? 'TechSaaS',
+            'content' => $this->settingModel->getByKey('about_content') ?? '',
+            'mission' => $this->settingModel->getByKey('about_mission') ?? '',
+            'vision' => $this->settingModel->getByKey('about_vision') ?? '',
+            'stat_customers' => $this->settingModel->getByKey('about_stat_customers') ?? '500+',
+            'stat_experts' => $this->settingModel->getByKey('about_stat_experts') ?? '50+',
+            'stat_uptime' => $this->settingModel->getByKey('about_stat_uptime') ?? '99.9%',
+            'values' => json_decode($this->settingModel->getByKey('about_values') ?? '[]', true)
+        ];
+        
+        require_once "views/admin/settings/about.php";
+    }
+    public function updateAbout() {
+        // Log for debugging
+        error_log('=== updateAbout method called ===');
+        error_log('POST data: ' . print_r($_POST, true));
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: " . BASE_PATH . "/admin/settings");
+            exit;
+        }
+
+        $adminId = (int)$_SESSION['user']['id'];
+
+        // Update all about settings
+        $this->settingModel->updateByKey('about_title', $_POST['title'] ?? 'Về chúng tôi', $adminId);
+        $this->settingModel->updateByKey('about_subtitle', $_POST['subtitle'] ?? '', $adminId);
+        $this->settingModel->updateByKey('about_company_name', $_POST['company_name'] ?? 'TechSaaS', $adminId);
+        $this->settingModel->updateByKey('about_content', $_POST['content'] ?? '', $adminId);
+        $this->settingModel->updateByKey('about_mission', $_POST['mission'] ?? '', $adminId);
+        $this->settingModel->updateByKey('about_vision', $_POST['vision'] ?? '', $adminId);
+        
+        // Statistics
+        $this->settingModel->updateByKey('about_stat_customers', $_POST['stat_customers'] ?? '500+', $adminId);
+        $this->settingModel->updateByKey('about_stat_experts', $_POST['stat_experts'] ?? '50+', $adminId);
+        $this->settingModel->updateByKey('about_stat_support', $_POST['stat_support'] ?? '24/7', $adminId);
+        $this->settingModel->updateByKey('about_stat_uptime', $_POST['stat_uptime'] ?? '99.9%', $adminId);
+        
+        // Values (JSON)
+        if (isset($_POST['value_title']) && is_array($_POST['value_title'])) {
+            $values = [];
+            for ($i = 0; $i < count($_POST['value_title']); $i++) {
+                if (!empty($_POST['value_title'][$i])) {
+                    $values[] = [
+                        'icon' => $_POST['value_icon'][$i] ?? 'fa-solid fa-rocket',
+                        'title' => $_POST['value_title'][$i],
+                        'desc' => $_POST['value_desc'][$i] ?? ''
+                    ];
+                }
+            }
+            $this->settingModel->updateByKey('about_values', json_encode($values, JSON_UNESCAPED_UNICODE), $adminId);
+        }
+
+        error_log('About settings updated successfully');
+        $_SESSION['success'] = 'Cập nhật nội dung Giới thiệu thành công!';
+        header("Location: " . BASE_PATH . "/admin/settings?success=1#about");
+        exit;
+    }
 }

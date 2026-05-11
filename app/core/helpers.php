@@ -18,3 +18,12 @@ function csrf_field() {
 function csrf_token() {
     return $_SESSION['csrf_token'] ?? '';
 }
+
+function getAboutSettings($conn) {
+    static $settings = null;
+    if ($settings === null) {
+        $settingModel = new SettingModel($conn);
+        $settings = $settingModel->getAllSettings();
+    }
+    return $settings;
+}

@@ -113,7 +113,7 @@ switch (true) {
         (new FaqController($conn))->submit();
         break;
     case $url === 'about':
-        require_once "views/client/about.php";
+        (new HomeController($conn))->about();
         break;
     // ── ADMIN: FAQ ROUTES (HIDDEN ID) ────────────────────────────────
     case $url === 'admin/faqs':
@@ -230,6 +230,13 @@ switch (true) {
         (new AdminSettingController($conn))->update();
         break;
 
+    case $url === 'admin/settings/about':
+        (new AdminSettingController($conn))->about();
+        break;
+
+    case $url === 'admin/settings/about/update':
+        (new AdminSettingController($conn))->updateAbout();
+        break;
     case $url === 'admin/settings/slider/create':
         (new AdminSettingController($conn))->sliderCreate();
         break;
