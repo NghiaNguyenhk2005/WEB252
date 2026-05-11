@@ -41,16 +41,16 @@
                                 <textarea name="content" class="form-control rounded-3" rows="3" placeholder="Sản phẩm rất tuyệt vời..." required></textarea>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="rating-input">
-                                    <span class="small text-muted me-2">Đánh giá:</span>
-                                    <select name="rating" class="form-select form-select-sm d-inline-block w-auto rounded-pill px-3">
-                                        <option value="5">5 Sao</option>
-                                        <option value="4">4 Sao</option>
-                                        <option value="3">3 Sao</option>
-                                        <option value="2">2 Sao</option>
-                                        <option value="1">1 Sao</option>
-                                    </select>
-                                </div>
+                            <div class="rating-input mb-3">
+                                <label class="form-label fw-semibold mb-2">Đánh giá của bạn:</label>
+                                <select name="rating" class="form-select rounded-pill" style="width: auto; min-width: 150px;">
+                                    <option value="5">★★★★★ 5 Sao - Tuyệt vời</option>
+                                    <option value="4">★★★★☆ 4 Sao - Tốt</option>
+                                    <option value="3">★★★☆☆ 3 Sao - Trung bình</option>
+                                    <option value="2">★★☆☆☆ 2 Sao - Không hài lòng</option>
+                                    <option value="1">★☆☆☆☆ 1 Sao - Rất tệ</option>
+                                </select>
+                            </div>
                                 <button type="submit" class="btn btn-primary rounded-pill px-4">Gửi bình luận</button>
                             </div>
                         </form>
