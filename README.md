@@ -2,13 +2,11 @@
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-%3E%3D%207.4-777bb4.svg?logo=php)
-![MySQL](https://img.shields.io/badge/MySQL-Database-4479a1.svg?logo=mysql)
+![MySQL](https://img.shields.io/badge/MySQL-5.7%2B-4479a1.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-Custom%20MVC-orange.svg)
 ![License](https://img.shields.io/badge/License-Academic-green.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/NghiaNguyenhk2005/WEB252)
 ![GitHub repo size](https://img.shields.io/github/repo-size/NghiaNguyenhk2005/WEB252)
-![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-777bb4.svg)
-![MySQL Version](https://img.shields.io/badge/MySQL-5.7%2B-4479a1.svg)
 ![Status](https://img.shields.io/badge/status-completed-brightgreen.svg)
 
 ---
