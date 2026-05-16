@@ -21,7 +21,7 @@ class AdminOrderController {
         $sql = "SELECT o.*, u.username
                 FROM orders o
                 LEFT JOIN users u ON o.user_id = u.id
-                WHERE o.deleted_at IS NULL
+                WHERE (o.deleted_at IS NULL OR o.deleted_at = '0000-00-00 00:00:00')
                 ORDER BY o.created_at DESC
                 LIMIT ? OFFSET ?";
         $stmt = $this->conn->prepare($sql);
@@ -36,7 +36,7 @@ class AdminOrderController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id     = (int)($_POST['id'] ?? 0);
             $status = $_POST['status'] ?? '';
-            $allowed = ['pending', 'paid', 'shipping', 'completed', 'cancelled'];
+            $allowed = ['pending', 'paid', 'shipping', 'completed', 'cancelled','refunded'];
             if ($id && in_array($status, $allowed)) {
                 $this->orderModel->update($id, ['status' => $status]);
             }

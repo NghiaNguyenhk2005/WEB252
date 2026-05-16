@@ -125,12 +125,12 @@
                         <div>
                             <?php
                             $statusConfig = [
-                                'pending' => ['label' => 'Chờ xử lý', 'class' => 'bg-warning text-dark'],
-                                'paid' => ['label' => 'Đã thanh toán', 'class' => 'bg-success'],
-                                'shipping' => ['label' => 'Đang giao hàng', 'class' => 'bg-primary'],
-                                'completed' => ['label' => 'Hoàn thành', 'class' => 'bg-success'],
-                                'cancelled' => ['label' => 'Đã hủy', 'class' => 'bg-danger'],
-                                'refunded' => ['label' => 'Hoàn tiền', 'class' => 'bg-secondary'],
+                                'pending'   => ['label' => 'Chờ xử lý',    'color' => '#d97706', 'class' => 'bg-warning'],
+                                'paid'      => ['label' => 'Đã thanh toán', 'color' => '#2563eb', 'class' => 'bg-primary'],
+                                'shipping'  => ['label' => 'Đang giao',     'color' => '#0891b2', 'class' => 'bg-info'],
+                                'completed' => ['label' => 'Hoàn thành',    'color' => '#16a34a', 'class' => 'bg-success'],
+                                'cancelled' => ['label' => 'Đã hủy',        'color' => '#dc2626', 'class' => 'bg-danger'],
+                                'refunded'  => ['label' => 'Đã hoàn tiền',  'color' => '#6b7280', 'class' => 'bg-secondary'],
                             ];
                             $status = $statusConfig[$order['status']] ?? ['label' => ucfirst($order['status']), 'class' => 'bg-secondary'];
                             ?>
@@ -175,8 +175,9 @@
             <!-- Action Buttons -->
             <?php if ($order['status'] === 'pending'): ?>
             <div class="mt-4">
-                <form method="POST" action="<?= BASE_PATH ?>/order/cancel/<?= $order['id'] ?>" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')">
+                <form method="POST" action="<?= BASE_PATH ?>/order/cancel" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')">
                     <?= csrf_field() ?>
+                    <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                     <button type="submit" class="btn btn-outline-danger w-100 rounded-pill py-2">
                         <i class="fa-solid fa-ban me-2"></i>Hủy đơn hàng
                     </button>

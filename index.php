@@ -195,7 +195,10 @@ switch (true) {
     case $url === 'order/success':
         (new OrderController($conn))->success();
         break;
-
+    case $url === 'order/cancel':
+        (new OrderController($conn))->cancel();
+        break;
+        
     case $url === 'comment/product':
         (new CommentController($conn))->submitProductComment();
         break;

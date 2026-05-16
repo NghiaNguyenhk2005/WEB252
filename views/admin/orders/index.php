@@ -18,6 +18,16 @@
 .srt-table {
     position: relative;
 }
+.badge-refunded {
+    background: #fef3c7;
+    color: #d97706;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    display: inline-block;
+}
 </style>
 
 <?php include __DIR__ . '/../partials/header.php'; ?>
@@ -60,6 +70,7 @@
                 'shipping'  => ['Đang giao',     'badge-shipping'],
                 'completed' => ['Hoàn thành',    'badge-completed'],
                 'cancelled' => ['Đã huỷ',        'badge-banned'],
+                'refunded'  => ['Đã hoàn tiền',  'badge-refunded'],
             ];
 
             if (isset($orders) && is_object($orders) && $orders->num_rows > 0):
@@ -99,6 +110,7 @@
                                             'shipping'  => 'background:#0891b2;',
                                             'completed' => 'background:#16a34a;',
                                             'cancelled' => 'background:#dc2626;',
+                                            'refunded'  => 'background:#6b7280;',
                                         ];
                                         echo $colors[$order['status']] ?? '';
                                         ?>">

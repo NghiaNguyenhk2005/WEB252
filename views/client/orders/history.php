@@ -51,13 +51,17 @@ if (!isset($orders) || !is_object($orders) || !property_exists($orders, 'num_row
                                             <td><?= date('d/m/Y', strtotime($order['created_at'])) ?></td>
                                             <td class="fw-bold text-primary"><?= number_format($order['total_price'], 0, ',', '.') ?>đ</td>
                                             <td>
-                                                <?php 
-                                                    $statusClass = 'bg-warning';
-                                                    $statusText = 'Đang xử lý';
-                                                    if($order['status'] === 'shipping') { $statusClass = 'bg-info'; $statusText = 'Đang giao'; }
-                                                    if($order['status'] === 'completed') { $statusClass = 'bg-success'; $statusText = 'Hoàn thành'; }
-                                                    if($order['status'] === 'cancelled') { $statusClass = 'bg-danger'; $statusText = 'Đã hủy'; }
-                                                ?>
+                                            <?php 
+                                                $statusMap = [
+                                                    'pending'   => ['class' => 'bg-warning', 'text' => 'Đang xử lý'],
+                                                    'shipping'  => ['class' => 'bg-info',    'text' => 'Đang giao'],
+                                                    'completed' => ['class' => 'bg-success', 'text' => 'Hoàn thành'],
+                                                    'cancelled' => ['class' => 'bg-danger',  'text' => 'Đã hủy'],
+                                                    'refunded'  => ['class' => 'bg-secondary', 'text' => 'Đã hoàn tiền'],
+                                                ];
+                                                $statusClass = $statusMap[$order['status']]['class'] ?? 'bg-warning';
+                                                $statusText = $statusMap[$order['status']]['text'] ?? 'Đang xử lý';
+                                            ?>
                                                 <span class="badge <?= $statusClass ?> rounded-pill px-3"><?= $statusText ?></span>
                                             </td>
                                             <td class="text-end">
